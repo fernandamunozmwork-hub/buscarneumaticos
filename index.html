@@ -68,6 +68,13 @@
       }, 0);
     }
 
+    // Convierte el número de stock en el texto que ve el cliente
+    function textoStock(total) {
+      if (total > 25) return 'DISPONIBLE';
+      if (total > 0) return total + ' unidades';
+      return 'SIN STOCK';
+    }
+
     async function cargarProductos() {
       const estado = document.getElementById('estado');
       try {
@@ -134,7 +141,7 @@
           <td>${producto.tipo}</td>
           <td>${producto.medida}</td>
           <td>${isNaN(producto.precio) ? '' : '$' + producto.precio}</td>
-          <td>${stockTotal(producto)}</td>
+          <td>${textoStock(stockTotal(producto))}</td>
           <td><button onclick="verSucursales(${indice})">Ver sucursales</button></td>
         `;
         cuerpo.appendChild(fila);
