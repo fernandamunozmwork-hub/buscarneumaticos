@@ -218,7 +218,7 @@
 <body>
 
   <header>
-    <span class="marca">🛞 LLANTAS DEL PACÍFICO</span>
+    <span class="marca">🛞 NEUMÁTICOS DEL PACÍFICO</span>
     <h1>Stock <span>Cardepot</span></h1>
     <p class="subtitulo">Escribí la medida de tu neumático y consultá precio y disponibilidad</p>
   </header>
@@ -270,8 +270,26 @@
 
     function stockTotal(producto) {
       return SUCURSALES.reduce(function(total, suc) {
-        return total + (producto.sucursales[suc] || 0);
+        return total + (producto.sucursales[suc] ? producto.sucursales[suc].cantidad : 0);
       }, 0);
+    }
+
+    // Convierte el valor crudo de una celda de sucursal en { cantidad, texto }.
+    // Soporta tres formas: número (ej "8"), la palabra "Disponible" (stock alto,
+    // cantidad exacta desconocida), o vacío/0 (sin stock).
+    function interpretarSucursal(valorRaw) {
+      const texto = (valorRaw || '').trim();
+
+      if (texto.toLowerCase() === 'disponible') {
+        return { cantidad: 999, texto: 'Disponible' };
+      }
+
+      const numero = parseInt(texto);
+      if (!isNaN(numero) && numero > 0) {
+        return { cantidad: numero, texto: String(numero) };
+      }
+
+      return { cantidad: 0, texto: null };
     }
 
     function estadoStock(total) {
@@ -308,8 +326,8 @@
           const sucursales = {};
           SUCURSALES.forEach(function(suc) {
             const idx = idxSucursales[suc];
-            const valor = (idx !== -1 && columnas[idx]) ? parseInt(columnas[idx]) : 0;
-            sucursales[suc] = isNaN(valor) ? 0 : valor;
+            const valorRaw = (idx !== -1 && columnas[idx]) ? columnas[idx] : '';
+            sucursales[suc] = interpretarSucursal(valorRaw);
           });
 
           productos.push({
@@ -362,12 +380,16 @@
       const producto = ultimoFiltrado[indice];
       let detalle = producto.nombre + '\n\n';
 
-      const conStock = SUCURSALES.filter(function(suc) { return (producto.sucursales[suc] || 0) > 0; });
+      const conStock = SUCURSALES.filter(function(suc) {
+        return producto.sucursales[suc] && producto.sucursales[suc].cantidad > 0;
+      });
 
       if (conStock.length === 0) {
         detalle += 'Sin stock en ninguna sucursal.';
       } else {
-        conStock.forEach(function(suc) { detalle += suc + ': ' + producto.sucursales[suc] + '\n'; });
+        conStock.forEach(function(suc) {
+          detalle += suc + ': ' + producto.sucursales[suc].texto + '\n';
+        });
       }
 
       alert(detalle);
