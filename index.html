@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscar productos</title>
+</head>
+<body>
+  <h1>Buscar por medida</h1>
+
+  <input type="text" id="buscador" placeholder="Ej: 175/70 R13" autocomplete="off">
+
+  <p id="estado">Cargando productos...</p>
+
+  <table id="tablaResultados" style="display:none;">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Marca</th>
+        <th>Tipo</th>
+        <th>Medida</th>
+        <th>Precio</th>
+        <th>Stock total</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="cuerpoResultados"></tbody>
+  </table>
+
+  <script>
+    // Link de tu Google Sheet publicado como CSV
+    const URL_DATOS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTQiJFcV8f3jHmfpW3fXnOFwD_-S5i3eeXcFCf2JdfMkmScaR1s99S5l9z58AS5pqrHvJtemRNy6X2m/pub?gid=674932714&single=true&output=csv';
+
+    const SUCURSALES = [
+      'central', 'conchali', 'carlossalas', 'rincoanada', 'estoril', 'ossa',
+      'movicenter', 'diezjulio', 'mapocho', 'lascondes', 'granav', 'plazaoeste',
+      'macul', 'dominica', 'catorcedelafama', 'vicuñamackenna', 'opl', 'goodyear'
+    ];
+
+    let productos = [];
+
+    // Convierte una línea de CSV en un array de valores, respetando comillas
+    // (Google Sheets pone comillas cuando un texto tiene comas adentro)
+    function parsearLineaCSV(linea) {
+      const resultado = [];
+      let actual = '';
+      let entreComillas = false;
+
+      for (let i = 0; i < linea.length; i++) {
+        const char = linea[i];
+        if (char === '"') {
+          if (entreComillas && linea[i + 1] === '"') { actual += '"'; i++; }
+          else { entreComillas = !entreComillas; }
+        } else if (char === ',' && !entreComillas) {
+          resultado.push(actual);
+          actual = '';
+        } else {
+          actual += char;
+        }
+      }
+      resultado.push(actual);
+      return resultado;
+    }
+
+    function stockTotal(producto) {
+      return SUCURSALES.reduce(function(total, suc) {
+        return total + (producto.sucursales[suc] || 0);
+      }, 0);
+    }
+
+    async function cargarProductos() {
+      const estado = document.getElementById('estado');
+      try {
+        const respuesta = await fetch(URL_DATOS);
+        if (!respuesta.ok) throw new Error('No se pudo leer la planilla');
+        const texto = await respuesta.text();
+
+        const lineas = texto.split(/\r?\n/).filter(function(l) { return l.trim() !== ''; });
+        const encabezados = parsearLineaCSV(lineas[0]).map(function(h) { return h.trim().toLowerCase(); });
+
+        const idxNombre = encabezados.indexOf('nombre');
+        const idxMarca = encabezados.indexOf('marca');
+        const idxTipo = encabezados.indexOf('tipo');
+        const idxMedida = encabezados.indexOf('pp');
+        const idxPrecio = encabezados.indexOf('precio');
+
+        const idxSucursales = {};
+        SUCURSALES.forEach(function(suc) { idxSucursales[suc] = encabezados.indexOf(suc); });
+
+        productos = [];
+        for (let i = 1; i < lineas.length; i++) {
+          const columnas = parsearLineaCSV(lineas[i]);
+          const nombre = columnas[idxNombre] ? columnas[idxNombre].trim() : '';
+          if (nombre === '') continue;
+
+          const sucursales = {};
+          SUCURSALES.forEach(function(suc) {
+            const idx = idxSucursales[suc];
+            const valor = (idx !== -1 && columnas[idx]) ? parseInt(columnas[idx]) : 0;
+            sucursales[suc] = isNaN(valor) ? 0 : valor;
+          });
+
+          productos.push({
+            nombre: nombre,
+            marca: idxMarca !== -1 && columnas[idxMarca] ? columnas[idxMarca].trim() : '',
+            tipo: idxTipo !== -1 && columnas[idxTipo] ? columnas[idxTipo].trim() : '',
+            medida: idxMedida !== -1 && columnas[idxMedida] ? columnas[idxMedida].trim() : '',
+            precio: idxPrecio !== -1 ? parseFloat(columnas[idxPrecio]) : NaN,
+            sucursales: sucursales
+          });
+        }
+
+        estado.textContent = 'Escribí una medida para buscar (' + productos.length + ' productos disponibles).';
+      } catch (error) {
+        estado.textContent = 'No se pudieron cargar los productos. Probá recargar la página.';
+      }
+    }
+
+    function renderizarResultados(lista) {
+      const tabla = document.getElementById('tablaResultados');
+      const cuerpo = document.getElementById('cuerpoResultados');
+      cuerpo.innerHTML = '';
+
+      if (lista.length === 0) {
+        tabla.style.display = 'none';
+        return;
+      }
+
+      lista.forEach(function(producto, indice) {
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td>${producto.nombre}</td>
+          <td>${producto.marca}</td>
+          <td>${producto.tipo}</td>
+          <td>${producto.medida}</td>
+          <td>${isNaN(producto.precio) ? '' : '$' + producto.precio}</td>
+          <td>${stockTotal(producto)}</td>
+          <td><button onclick="verSucursales(${indice})">Ver sucursales</button></td>
+        `;
+        cuerpo.appendChild(fila);
+      });
+
+      tabla.style.display = '';
+    }
+
+    // Guardamos el último resultado filtrado para que "Ver sucursales" sepa a cuál se refiere
+    let ultimoFiltrado = [];
+
+    function verSucursales(indice) {
+      const producto = ultimoFiltrado[indice];
+      let detalle = producto.nombre + '\n\n';
+
+      const conStock = SUCURSALES.filter(function(suc) { return (producto.sucursales[suc] || 0) > 0; });
+
+      if (conStock.length === 0) {
+        detalle += 'Sin stock en ninguna sucursal.';
+      } else {
+        conStock.forEach(function(suc) { detalle += suc + ': ' + producto.sucursales[suc] + '\n'; });
+      }
+
+      alert(detalle);
+    }
+
+    document.getElementById('buscador').addEventListener('input', function(e) {
+      const termino = e.target.value.trim().toLowerCase();
+
+      if (termino === '') {
+        ultimoFiltrado = [];
+        renderizarResultados([]);
+        return;
+      }
+
+      ultimoFiltrado = productos.filter(function(p) {
+        return p.medida.toLowerCase().includes(termino);
+      });
+
+      renderizarResultados(ultimoFiltrado);
+    });
+
+    cargarProductos();
+  </script>
+</body>
+</html>
