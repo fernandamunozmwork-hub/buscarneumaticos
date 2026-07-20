@@ -446,8 +446,7 @@
           'Marca': producto.marca,
           'Tipo': producto.tipo,
           'Medida': producto.medida,
-          'Precio': isNaN(producto.precio) ? '' : producto.precio,
-          'Stock total': stockTotal(producto)
+          'Precio': isNaN(producto.precio) ? '' : producto.precio
         };
         SUCURSALES.forEach(function(suc) {
           fila[suc] = producto.sucursales[suc] ? producto.sucursales[suc].texto || 0 : 0;
