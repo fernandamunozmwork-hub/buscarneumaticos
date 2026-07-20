@@ -28,8 +28,9 @@
   </table>
 
   <script>
-    // Link de tu Google Sheet publicado como CSV
-    const URL_DATOS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTQiJFcV8f3jHmfpW3fXnOFwD_-S5i3eeXcFCf2JdfMkmScaR1s99S5l9z58AS5pqrHvJtemRNy6X2m/pub?gid=674932714&single=true&output=csv';
+    // Ahora la página le pregunta a tu propio servidor (Cloudflare Worker),
+    // no a Google directamente. El link real de la planilla queda oculto ahí.
+    const URL_DATOS = 'https://stock-neumaticos.fernanda-munozm-work.workers.dev/';
 
     const SUCURSALES = [
       'central', 'conchali', 'carlossalas', 'rincoanada', 'estoril', 'ossa',
