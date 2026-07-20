@@ -33,16 +33,14 @@
     const URL_DATOS = 'https://stock-neumaticos.fernanda-munozm-work.workers.dev/';
 
     const SUCURSALES = [
-      'central', 'conchali', 'carlossalas', 'rincoanada', 'estoril', 'ossa',
+      'CD', 'estoril', 'ossa',
       'movicenter', 'diezjulio', 'mapocho', 'lascondes', 'granav', 'plazaoeste',
-      'macul', 'dominica', 'catorcedelafama', 'vicuñamackenna', 'opl', 'goodyear'
+      'macul', 'dominica', 'catorcedelafama', 'vicuñamackenna', 'goodyear'
     ];
 
     let productos = [];
 
-    // Convierte una línea de CSV en un array de valores, respetando comillas
-    // (Google Sheets pone comillas cuando un texto tiene comas adentro)
-    function parsearLineaCSV(linea) {
+     function parsearLineaCSV(linea) {
       const resultado = [];
       let actual = '';
       let entreComillas = false;
@@ -69,8 +67,7 @@
       }, 0);
     }
 
-    // Convierte el número de stock en el texto que ve el cliente
-    function textoStock(total) {
+      function textoStock(total) {
       if (total > 25) return 'DISPONIBLE';
       if (total > 0) return total + ' unidades';
       return 'SIN STOCK';
@@ -151,7 +148,6 @@
       tabla.style.display = '';
     }
 
-    // Guardamos el último resultado filtrado para que "Ver sucursales" sepa a cuál se refiere
     let ultimoFiltrado = [];
 
     function verSucursales(indice) {
