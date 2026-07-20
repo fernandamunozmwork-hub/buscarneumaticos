@@ -6,6 +6,7 @@
   <title>Stock Cardepot</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     :root {
       --amarillo: #FFCC00;
@@ -116,6 +117,32 @@
       font-size: 13px;
       color: var(--gris-texto);
       font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-descargar {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 12.5px;
+      background: var(--amarillo);
+      color: var(--negro);
+      border: 1.5px solid var(--negro);
+      border-radius: 6px;
+      padding: 8px 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-descargar:hover { background: #E6B800; }
+    .btn-descargar:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
     }
 
     /* RESULTADOS EN TARJETAS */
@@ -230,7 +257,10 @@
     </div>
   </div>
 
-  <p id="estado">Cargando productos...</p>
+  <p id="estado">
+    <span id="estado-texto">Cargando productos...</span>
+    <button class="btn-descargar" id="btn-descargar" disabled>⬇ Descargar Excel</button>
+  </p>
   <div id="resultados"></div>
 
   <script>
@@ -299,7 +329,8 @@
     }
 
     async function cargarProductos() {
-      const estado = document.getElementById('estado');
+      const estadoTexto = document.getElementById('estado-texto');
+      const btnDescargar = document.getElementById('btn-descargar');
       try {
         const respuesta = await fetch(URL_DATOS);
         if (!respuesta.ok) throw new Error('No se pudo leer la planilla');
@@ -309,6 +340,7 @@
         const encabezados = parsearLineaCSV(lineas[0]).map(function(h) { return h.trim().toLowerCase(); });
 
         const idxNombre = encabezados.indexOf('nombre');
+        const idxCodigo = encabezados.indexOf('codigo') !== -1 ? encabezados.indexOf('codigo') : encabezados.indexOf('código');
         const idxMarca = encabezados.indexOf('marca');
         const idxTipo = encabezados.indexOf('tipo');
         const idxMedida = encabezados.indexOf('pp');
@@ -331,6 +363,7 @@
           });
 
           productos.push({
+            codigo: idxCodigo !== -1 && columnas[idxCodigo] ? columnas[idxCodigo].trim() : '',
             nombre: nombre,
             marca: idxMarca !== -1 && columnas[idxMarca] ? columnas[idxMarca].trim() : '',
             tipo: idxTipo !== -1 && columnas[idxTipo] ? columnas[idxTipo].trim() : '',
@@ -340,9 +373,10 @@
           });
         }
 
-        estado.textContent = 'Escribí una medida para buscar (' + productos.length + ' productos disponibles).';
+        estadoTexto.textContent = 'Escribí una medida para buscar (' + productos.length + ' productos disponibles).';
+        btnDescargar.disabled = false;
       } catch (error) {
-        estado.textContent = 'No se pudieron cargar los productos. Probá recargar la página.';
+        estadoTexto.textContent = 'No se pudieron cargar los productos. Probá recargar la página.';
       }
     }
 
@@ -363,7 +397,7 @@
             <div>
               <span class="tarjeta-medida">${producto.medida || '—'}</span>
               <div class="tarjeta-nombre">${producto.nombre}</div>
-              <div class="tarjeta-meta"><b>${producto.marca}</b> · ${producto.tipo}</div>
+              <div class="tarjeta-meta"><b>${producto.marca}</b> · ${producto.tipo}${producto.codigo ? ' · Código: ' + producto.codigo : ''}</div>
             </div>
           </div>
           <div class="tarjeta-bottom">
@@ -394,6 +428,35 @@
 
       alert(detalle);
     }
+
+    // Arma una fila plana por producto (datos generales + una columna por sucursal)
+    // y dispara la descarga de un archivo .xlsx con el catálogo completo.
+    function descargarExcel() {
+      const filas = productos.map(function(producto) {
+        const fila = {
+          'Código': producto.codigo,
+          'Nombre': producto.nombre,
+          'Marca': producto.marca,
+          'Tipo': producto.tipo,
+          'Medida': producto.medida,
+          'Precio': isNaN(producto.precio) ? '' : producto.precio,
+          'Stock total': stockTotal(producto)
+        };
+        SUCURSALES.forEach(function(suc) {
+          fila[suc] = producto.sucursales[suc] ? producto.sucursales[suc].texto || 0 : 0;
+        });
+        return fila;
+      });
+
+      const hoja = XLSX.utils.json_to_sheet(filas);
+      const libro = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(libro, hoja, 'Catálogo');
+
+      const fecha = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(libro, 'catalogo-stock-' + fecha + '.xlsx');
+    }
+
+    document.getElementById('btn-descargar').addEventListener('click', descargarExcel);
 
     document.getElementById('buscador').addEventListener('input', function(e) {
       const termino = e.target.value.trim().toLowerCase();
