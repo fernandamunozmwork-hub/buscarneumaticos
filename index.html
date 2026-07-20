@@ -322,10 +322,18 @@
       return { cantidad: 0, texto: null };
     }
 
-    function estadoStock(total) {
-      if (total > 25) return { clase: 'disponible', texto: 'Disponible' };
-      if (total > 0) return { clase: 'poco', texto: total + ' unidades' };
-      return { clase: 'sin', texto: 'Sin stock' };
+    // El estado que ve el cliente refleja solo la columna CD (Disponible / número / sin stock),
+    // no la suma de todas las sucursales.
+    function estadoCD(producto) {
+      const cd = producto.sucursales['CD'];
+
+      if (!cd || cd.cantidad === 0) {
+        return { clase: 'sin', texto: 'Sin stock' };
+      }
+      if (cd.texto === 'Disponible') {
+        return { clase: 'disponible', texto: 'Disponible' };
+      }
+      return { clase: 'poco', texto: cd.texto + ' unidades' };
     }
 
     async function cargarProductos() {
@@ -387,8 +395,7 @@
       if (lista.length === 0) return;
 
       lista.forEach(function(producto, indice) {
-        const total = stockTotal(producto);
-        const st = estadoStock(total);
+        const st = estadoCD(producto);
 
         const tarjeta = document.createElement('div');
         tarjeta.className = 'tarjeta';
