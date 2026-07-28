@@ -2,485 +2,1346 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stock Cardepot</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta name="theme-color" content="#111111">
+
+  <title>Stock Cardepot | Llantas del Pacífico</title>
+
+  <!-- FUENTES -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <style>
-    :root {
-      --amarillo: #FFCC00;
-      --negro: #141414;
-      --negro-suave: #2A2A2A;
-      --blanco: #FFFFFF;
-      --gris-fondo: #F5F5F3;
-      --gris-borde: #E4E2DC;
-      --gris-texto: #5B5B54;
-      --rojo: #E2001A;
-      --rojo-fondo: #FBE1E1;
-      --verde: #1E7A3D;
-      --verde-fondo: #E1F0E4;
-      --ambar: #B4791E;
-      --ambar-fondo: #F6E9D2;
-    }
 
-    * { box-sizing: border-box; }
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
 
-    body {
-      margin: 0;
-      background: var(--gris-fondo);
-      color: var(--negro);
-      font-family: 'Inter', sans-serif;
-      min-height: 100vh;
-    }
+  <link
+    href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@600;700&display=swap"
+    rel="stylesheet"
+  >
 
-    /* HEADER estilo franja de marca */
-    header {
-      background: var(--negro);
-      padding: 22px 20px 26px;
-      position: relative;
-      overflow: hidden;
-    }
-    header::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 6px;
-      background: var(--amarillo);
-    }
-    .marca {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--amarillo);
-      color: var(--negro);
-      border: 2px solid var(--negro);
-      border-radius: 4px;
-      padding: 4px 10px;
-      font-family: 'Archivo Black', sans-serif;
-      font-size: 12px;
-      letter-spacing: 0.5px;
-      margin-bottom: 14px;
-    }
-    h1 {
-      font-family: 'Archivo Black', sans-serif;
-      color: var(--blanco);
-      font-size: 26px;
-      line-height: 1.15;
-      margin: 0 0 4px;
-      text-transform: uppercase;
-    }
-    h1 span { color: var(--amarillo); }
-    .subtitulo {
-      color: #C9C9C4;
-      font-size: 14px;
-      margin: 0;
-    }
-
-    /* BUSCADOR */
-    .zona-buscador {
-      padding: 18px 20px 0;
-      max-width: 720px;
-      margin: 0 auto;
-    }
-    .caja-buscador {
-      display: flex;
-      background: var(--blanco);
-      border: 2px solid var(--negro);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 4px 4px 0 var(--amarillo);
-    }
-    .caja-buscador input {
-      flex: 1;
-      border: none;
-      padding: 14px 14px;
-      font-size: 16px;
-      font-family: 'Inter', sans-serif;
-      outline: none;
-      background: transparent;
-      color: var(--negro);
-    }
-    .caja-buscador input::placeholder { color: #A8A8A0; }
-    .caja-buscador .icono {
-      display: flex;
-      align-items: center;
-      padding: 0 14px;
-      background: var(--amarillo);
-      font-size: 18px;
-    }
-
-    #estado {
-      max-width: 720px;
-      margin: 12px auto 0;
-      padding: 0 20px;
-      font-size: 13px;
-      color: var(--gris-texto);
-      font-family: 'Inter', sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .btn-descargar {
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 12.5px;
-      background: var(--amarillo);
-      color: var(--negro);
-      border: 1.5px solid var(--negro);
-      border-radius: 6px;
-      padding: 8px 14px;
-      cursor: pointer;
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn-descargar:hover { background: #E6B800; }
-    .btn-descargar:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    /* RESULTADOS EN TARJETAS */
-    #resultados {
-      max-width: 720px;
-      margin: 14px auto 60px;
-      padding: 0 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .tarjeta {
-      background: var(--blanco);
-      border: 1.5px solid var(--gris-borde);
-      border-radius: 10px;
-      padding: 14px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .tarjeta-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-    }
-    .tarjeta-nombre {
-      font-size: 14.5px;
-      font-weight: 700;
-      line-height: 1.3;
-      color: var(--negro);
-    }
-    .tarjeta-medida {
-      display: inline-block;
-      font-family: 'Roboto Mono', monospace;
-      font-weight: 700;
-      font-size: 12px;
-      background: var(--negro);
-      color: var(--amarillo);
-      padding: 2px 8px;
-      border-radius: 4px;
-      margin-bottom: 6px;
-    }
-    .tarjeta-meta {
-      font-size: 12.5px;
-      color: var(--gris-texto);
-    }
-    .tarjeta-meta b { color: var(--negro-suave); }
-
-    .tarjeta-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-top: 1px dashed var(--gris-borde);
-      padding-top: 10px;
-      margin-top: 2px;
-    }
-    .precio {
-      font-family: 'Roboto Mono', monospace;
-      font-weight: 700;
-      font-size: 18px;
-      color: var(--negro);
-    }
-
-    .estado-stock {
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 11px;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-      padding: 5px 10px;
-      border-radius: 20px;
-    }
-    .estado-stock.disponible { background: var(--verde-fondo); color: var(--verde); }
-    .estado-stock.poco { background: var(--ambar-fondo); color: var(--ambar); }
-    .estado-stock.sin { background: var(--rojo-fondo); color: var(--rojo); }
-
-    .btn-sucursales {
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 12.5px;
-      background: var(--negro);
-      color: var(--blanco);
-      border: none;
-      border-radius: 6px;
-      padding: 8px 12px;
-      cursor: pointer;
-    }
-    .btn-sucursales:hover { background: var(--negro-suave); }
-
-    .vacio {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--gris-texto);
-      font-size: 14px;
-    }
-  </style>
+  <!-- CSS EXTERNO -->
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-  <header>
-    <span class="marca">🛞 NEUMÁTICOS DEL PACÍFICO</span>
-    <h1>Stock <span>Cardepot</span></h1>
-    <p class="subtitulo">Escribí la medida de tu neumático y consultá precio y disponibilidad</p>
-  </header>
+  <header class="hero">
+  <div class="hero-contenido">
 
-  <div class="zona-buscador">
-    <div class="caja-buscador">
-      <input type="text" id="buscador" placeholder="Ej: 175/70 R13" autocomplete="off">
-      <div class="icono">🔍</div>
+    <a
+      class="marca-logo"
+      href="#"
+      aria-label="Llantas del Pacífico"
+    >
+      <img
+        src="assets/logo.svg"
+        alt="Llantas del Pacífico"
+      >
+    </a>
+
+    <h1>
+      Stock <span>Cardepot</span>
+    </h1>
+
+    <p class="subtitulo">
+      Consulta medidas, precios y disponibilidad de neumáticos
+      en nuestras sucursales.
+    </p>
+
+  </div>
+</header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main>
+
+    <!-- PANEL DE BÚSQUEDA -->
+    <section class="panel-busqueda">
+
+      <div class="panel-titulo">
+
+        <label for="buscador">
+          ¿Qué medida necesitas?
+        </label>
+
+        <span
+          id="contadorGeneral"
+          class="contador-general"
+        >
+          Cargando catálogo...
+        </span>
+
+      </div>
+
+
+      <!-- BUSCADOR -->
+      <div class="buscador-fila">
+
+        <span
+          class="icono-busqueda"
+          aria-hidden="true"
+        >
+          🔍
+        </span>
+
+        <input
+          id="buscador"
+          type="search"
+          inputmode="search"
+          placeholder="Ejemplo: 175/70 R13"
+          autocomplete="off"
+          aria-describedby="estado"
+        >
+
+        <button
+          id="btnLimpiar"
+          class="btn-limpiar"
+          type="button"
+          aria-label="Limpiar búsqueda"
+        >
+          ×
+        </button>
+
+        <button
+          id="btnBuscar"
+          class="btn-buscar"
+          type="button"
+        >
+          Buscar
+        </button>
+
+      </div>
+
+
+      <!-- BÚSQUEDAS RÁPIDAS -->
+      <div class="sugerencias">
+
+        <span class="sugerencias-texto">
+          Búsquedas rápidas:
+        </span>
+
+        <button
+          class="chip"
+          type="button"
+          data-medida="175/70 R13"
+        >
+          175/70 R13
+        </button>
+
+        <button
+          class="chip"
+          type="button"
+          data-medida="185/65 R15"
+        >
+          185/65 R15
+        </button>
+
+        <button
+          class="chip"
+          type="button"
+          data-medida="205/55 R16"
+        >
+          205/55 R16
+        </button>
+
+        <button
+          class="chip"
+          type="button"
+          data-medida="265/65 R17"
+        >
+          265/65 R17
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ESTADO DE BÚSQUEDA -->
+    <div class="barra-estado">
+
+      <p
+        id="estado"
+        aria-live="polite"
+      >
+        Cargando productos...
+      </p>
+
+      <div class="leyenda">
+
+        <span>
+          <i class="punto verde"></i>
+          Disponible
+        </span>
+
+        <span>
+          <i class="punto ambar"></i>
+          Stock bajo
+        </span>
+
+        <span>
+          <i class="punto rojo"></i>
+          Sin stock
+        </span>
+
+      </div>
+
     </div>
+
+
+    <!-- RESULTADOS -->
+    <section
+      id="resultados"
+      aria-live="polite"
+    >
+
+      <div class="cargando">
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- MODAL DE SUCURSALES -->
+  <div
+    id="modalFondo"
+    class="modal-fondo"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitulo"
+  >
+
+    <div class="modal">
+
+      <div class="modal-cabecera">
+
+        <div>
+
+          <h2 id="modalTitulo">
+            Stock por sucursal
+          </h2>
+
+          <p id="modalSubtitulo"></p>
+
+        </div>
+
+        <button
+          id="modalCerrar"
+          class="modal-cerrar"
+          type="button"
+          aria-label="Cerrar ventana"
+        >
+          ×
+        </button>
+
+      </div>
+
+      <div class="modal-contenido">
+
+        <div
+          id="listaSucursales"
+          class="lista-sucursales"
+        ></div>
+
+      </div>
+
+    </div>
+
   </div>
 
-  <p id="estado">
-    <span id="estado-texto">Cargando productos...</span>
-    <button class="btn-descargar" id="btn-descargar" disabled>⬇ Descargar Excel</button>
-  </p>
-  <div id="resultados"></div>
 
   <script>
-    // Ahora la página le pregunta a tu propio servidor (Cloudflare Worker),
-    // no a Google directamente. El link real de la planilla queda oculto ahí.
-    const URL_DATOS = 'https://stock-neumaticos.fernanda-munozm-work.workers.dev/';
 
+    /* CLOUDFLARE WORKER */
+    const URL_DATOS =
+      'https://stock-neumaticos.fernanda-munozm-work.workers.dev/';
+
+
+    /* MÁXIMO DE PRODUCTOS MOSTRADOS */
+    const MAX_RESULTADOS = 80;
+
+
+    /* SUCURSALES DEL ARCHIVO CSV */
     const SUCURSALES = [
-      'CD', 'estoril', 'ossa',
-      'movicenter', 'diezjulio', 'mapocho', 'lascondes', 'granav', 'plazaoeste',
-      'macul', 'dominica', 'catorcedelafama', 'vinadelmar' ,'vicuñamackenna', 'goodyear'
+      'CD',
+      'estoril',
+      'ossa',
+      'movicenter',
+      'diezjulio',
+      'mapocho',
+      'lascondes',
+      'granav',
+      'plazaoeste',
+      'macul',
+      'dominica',
+      'catorcedelafama',
+      'vicuñamackenna',
+      'goodyear'
     ];
+
+
+    /* NOMBRES VISIBLES DE SUCURSALES */
+    const NOMBRES_SUCURSALES = {
+      CD: 'Centro de Distribución',
+      estoril: 'Estoril',
+      ossa: 'Ossa',
+      movicenter: 'Movicenter',
+      diezjulio: 'Diez de Julio',
+      mapocho: 'Mapocho',
+      lascondes: 'Las Condes',
+      granav: 'Gran Avenida',
+      plazaoeste: 'Plaza Oeste',
+      macul: 'Macul',
+      dominica: 'Dominica',
+      catorcedelafama: 'Catorce de la Fama',
+      vicuñamackenna: 'Vicuña Mackenna',
+      goodyear: 'Goodyear'
+    };
+
 
     let productos = [];
     let ultimoFiltrado = [];
+    let temporizadorBusqueda;
 
+
+    /* ELEMENTOS HTML */
+    const buscador =
+      document.getElementById('buscador');
+
+    const estado =
+      document.getElementById('estado');
+
+    const resultados =
+      document.getElementById('resultados');
+
+    const contadorGeneral =
+      document.getElementById('contadorGeneral');
+
+    const btnLimpiar =
+      document.getElementById('btnLimpiar');
+
+    const btnBuscar =
+      document.getElementById('btnBuscar');
+
+    const modalFondo =
+      document.getElementById('modalFondo');
+
+    const modalCerrar =
+      document.getElementById('modalCerrar');
+
+    const modalTitulo =
+      document.getElementById('modalTitulo');
+
+    const modalSubtitulo =
+      document.getElementById('modalSubtitulo');
+
+    const listaSucursales =
+      document.getElementById('listaSucursales');
+
+
+    /* LEER CORRECTAMENTE CADA FILA DEL CSV */
     function parsearLineaCSV(linea) {
+
       const resultado = [];
+
       let actual = '';
       let entreComillas = false;
 
       for (let i = 0; i < linea.length; i++) {
-        const char = linea[i];
-        if (char === '"') {
-          if (entreComillas && linea[i + 1] === '"') { actual += '"'; i++; }
-          else { entreComillas = !entreComillas; }
-        } else if (char === ',' && !entreComillas) {
+
+        const caracter = linea[i];
+
+        if (caracter === '"') {
+
+          if (
+            entreComillas &&
+            linea[i + 1] === '"'
+          ) {
+
+            actual += '"';
+            i++;
+
+          } else {
+
+            entreComillas = !entreComillas;
+
+          }
+
+        } else if (
+          caracter === ',' &&
+          !entreComillas
+        ) {
+
           resultado.push(actual);
           actual = '';
+
         } else {
-          actual += char;
+
+          actual += caracter;
+
         }
+
       }
+
       resultado.push(actual);
+
       return resultado;
+
     }
 
-    function stockTotal(producto) {
-      return SUCURSALES.reduce(function(total, suc) {
-        return total + (producto.sucursales[suc] ? producto.sucursales[suc].cantidad : 0);
-      }, 0);
+
+    /* NORMALIZAR TEXTO PARA BUSCAR */
+    function normalizarTexto(valor) {
+
+      return String(valor || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '');
+
     }
 
-    // Convierte el valor crudo de una celda de sucursal en { cantidad, texto }.
-    // Soporta tres formas: número (ej "8"), la palabra "Disponible" (stock alto,
-    // cantidad exacta desconocida), o vacío/0 (sin stock).
-    function interpretarSucursal(valorRaw) {
-      const texto = (valorRaw || '').trim();
 
-      if (texto.toLowerCase() === 'disponible') {
-        return { cantidad: 999, texto: 'Disponible' };
-      }
+    /* PROTEGER TEXTO DEL CSV */
+    function escaparHTML(valor) {
 
-      const numero = parseInt(texto);
-      if (!isNaN(numero) && numero > 0) {
-        return { cantidad: numero, texto: String(numero) };
-      }
+      return String(valor ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 
-      return { cantidad: 0, texto: null };
     }
 
-    // El estado que ve el cliente refleja solo la columna CD (Disponible / número / sin stock),
-    // no la suma de todas las sucursales.
-    function estadoCD(producto) {
-      const cd = producto.sucursales['CD'];
 
-      if (!cd || cd.cantidad === 0) {
-        return { clase: 'sin', texto: 'Sin stock' };
-      }
-      if (cd.texto === 'Disponible') {
-        return { clase: 'disponible', texto: 'Disponible' };
-      }
-      return { clase: 'poco', texto: cd.texto + ' unidades' };
+    /* CALCULAR STOCK TOTAL */
+    function obtenerStockTotal(producto) {
+
+      return SUCURSALES.reduce(
+        function(total, sucursal) {
+
+          return total +
+            (producto.sucursales[sucursal] || 0);
+
+        },
+        0
+      );
+
     }
 
+
+    /* DEFINIR DISPONIBILIDAD */
+    function obtenerEstadoStock(total) {
+
+      if (total > 25) {
+
+        return {
+          clase: 'disponible',
+          texto: 'Disponible'
+        };
+
+      }
+
+      if (total > 0) {
+
+        return {
+          clase: 'poco',
+          texto:
+            total +
+            (total === 1
+              ? ' unidad'
+              : ' unidades')
+        };
+
+      }
+
+      return {
+        clase: 'sin',
+        texto: 'Sin stock'
+      };
+
+    }
+
+
+    /* FORMATEAR PRECIO */
+    function formatearPrecio(precio) {
+
+      if (Number.isNaN(precio)) {
+        return 'Consultar';
+      }
+
+      return '$' +
+        Math.round(precio).toLocaleString('es-CL');
+
+    }
+
+
+    /* MOSTRAR MENSAJE INICIAL */
+    function mostrarEstadoInicial() {
+
+      resultados.innerHTML = `
+        <div class="estado-vacio">
+
+          <div>
+
+            <div class="estado-vacio-icono">
+              🔍
+            </div>
+
+            <h2>
+              Busca una medida de neumático
+            </h2>
+
+            <p>
+              Puedes escribirla con o sin espacios.
+
+              Por ejemplo:
+
+              <strong>175/70 R13</strong>
+
+              o
+
+              <strong>1757013</strong>.
+            </p>
+
+          </div>
+
+        </div>
+      `;
+
+    }
+
+
+    /* MOSTRAR MENSAJE SIN RESULTADOS */
+    function mostrarSinResultados(termino) {
+
+      resultados.innerHTML = `
+        <div class="estado-vacio">
+
+          <div>
+
+            <div class="estado-vacio-icono">
+              !
+            </div>
+
+            <h2>
+              No encontramos coincidencias
+            </h2>
+
+            <p>
+              No hay productos para
+              “${escaparHTML(termino)}”.
+
+              Revisa la medida o escribe solo una parte.
+            </p>
+
+          </div>
+
+        </div>
+      `;
+
+    }
+
+
+    /* CARGAR PRODUCTOS DESDE EL WORKER */
     async function cargarProductos() {
-      const estadoTexto = document.getElementById('estado-texto');
-      const btnDescargar = document.getElementById('btn-descargar');
+
       try {
-        const respuesta = await fetch(URL_DATOS);
-        if (!respuesta.ok) throw new Error('No se pudo leer la planilla');
+
+        const respuesta = await fetch(
+          URL_DATOS,
+          {
+            cache: 'no-store'
+          }
+        );
+
+        if (!respuesta.ok) {
+
+          throw new Error(
+            'No se pudo leer la información'
+          );
+
+        }
+
         const texto = await respuesta.text();
 
-        const lineas = texto.split(/\r?\n/).filter(function(l) { return l.trim() !== ''; });
-        const encabezados = parsearLineaCSV(lineas[0]).map(function(h) { return h.trim().toLowerCase(); });
+        const lineas = texto
+          .split(/\r?\n/)
+          .filter(function(linea) {
 
-        const idxNombre = encabezados.indexOf('nombre');
-        const idxCodigo = encabezados.indexOf('codigo') !== -1 ? encabezados.indexOf('codigo') : encabezados.indexOf('código');
-        const idxMarca = encabezados.indexOf('marca');
-        const idxTipo = encabezados.indexOf('tipo');
-        const idxMedida = encabezados.indexOf('pp');
-        const idxPrecio = encabezados.indexOf('precio');
+            return linea.trim() !== '';
 
-        const idxSucursales = {};
-        SUCURSALES.forEach(function(suc) { idxSucursales[suc] = encabezados.indexOf(suc.toLowerCase()); });
-
-        productos = [];
-        for (let i = 1; i < lineas.length; i++) {
-          const columnas = parsearLineaCSV(lineas[i]);
-          const nombre = columnas[idxNombre] ? columnas[idxNombre].trim() : '';
-          if (nombre === '') continue;
-
-          const sucursales = {};
-          SUCURSALES.forEach(function(suc) {
-            const idx = idxSucursales[suc];
-            const valorRaw = (idx !== -1 && columnas[idx]) ? columnas[idx] : '';
-            sucursales[suc] = interpretarSucursal(valorRaw);
           });
 
-          productos.push({
-            codigo: idxCodigo !== -1 && columnas[idxCodigo] ? columnas[idxCodigo].trim() : '',
-            nombre: nombre,
-            marca: idxMarca !== -1 && columnas[idxMarca] ? columnas[idxMarca].trim() : '',
-            tipo: idxTipo !== -1 && columnas[idxTipo] ? columnas[idxTipo].trim() : '',
-            medida: idxMedida !== -1 && columnas[idxMedida] ? columnas[idxMedida].trim() : '',
-            precio: idxPrecio !== -1 ? parseFloat(columnas[idxPrecio]) : NaN,
-            sucursales: sucursales
-          });
+
+        if (lineas.length < 2) {
+
+          throw new Error(
+            'El catálogo está vacío'
+          );
+
         }
 
-        estadoTexto.textContent = 'Escribí una medida para buscar (' + productos.length + ' productos disponibles).';
-        btnDescargar.disabled = false;
+
+        const encabezados =
+          parsearLineaCSV(lineas[0])
+            .map(function(encabezado) {
+
+              return encabezado
+                .trim()
+                .toLowerCase();
+
+            });
+
+
+        const idxNombre =
+          encabezados.indexOf('nombre');
+
+        const idxMarca =
+          encabezados.indexOf('marca');
+
+        const idxTipo =
+          encabezados.indexOf('tipo');
+
+        const idxMedida =
+          encabezados.indexOf('pp');
+
+        const idxPrecio =
+          encabezados.indexOf('precio');
+
+
+        const idxSucursales = {};
+
+
+        SUCURSALES.forEach(
+          function(sucursal) {
+
+            idxSucursales[sucursal] =
+              encabezados.indexOf(
+                sucursal.toLowerCase()
+              );
+
+          }
+        );
+
+
+        productos = [];
+
+
+        for (
+          let i = 1;
+          i < lineas.length;
+          i++
+        ) {
+
+          const columnas =
+            parsearLineaCSV(lineas[i]);
+
+
+          const nombre =
+            columnas[idxNombre]
+              ? columnas[idxNombre].trim()
+              : '';
+
+
+          if (!nombre) {
+            continue;
+          }
+
+
+          const sucursales = {};
+
+
+          SUCURSALES.forEach(
+            function(sucursal) {
+
+              const indice =
+                idxSucursales[sucursal];
+
+              const numero =
+                indice !== -1
+                  ? Number.parseInt(
+                      columnas[indice],
+                      10
+                    )
+                  : 0;
+
+              sucursales[sucursal] =
+                Number.isNaN(numero)
+                  ? 0
+                  : numero;
+
+            }
+          );
+
+
+          const medida =
+            columnas[idxMedida]
+              ? columnas[idxMedida].trim()
+              : '';
+
+
+          const marca =
+            columnas[idxMarca]
+              ? columnas[idxMarca].trim()
+              : '';
+
+
+          const tipo =
+            columnas[idxTipo]
+              ? columnas[idxTipo].trim()
+              : '';
+
+
+          const precio =
+            idxPrecio !== -1
+              ? Number.parseFloat(
+                  columnas[idxPrecio]
+                )
+              : Number.NaN;
+
+
+          productos.push({
+
+            nombre: nombre,
+            marca: marca,
+            tipo: tipo,
+            medida: medida,
+            precio: precio,
+            sucursales: sucursales,
+
+            busqueda: normalizarTexto(
+              medida +
+              ' ' +
+              nombre +
+              ' ' +
+              marca +
+              ' ' +
+              tipo
+            )
+
+          });
+
+        }
+
+
+        contadorGeneral.textContent =
+          productos.length.toLocaleString(
+            'es-CL'
+          ) +
+          ' productos en el catálogo';
+
+
+        estado.textContent =
+          'Escribe una medida para comenzar.';
+
+
+        mostrarEstadoInicial();
+
       } catch (error) {
-        estadoTexto.textContent = 'No se pudieron cargar los productos. Probá recargar la página.';
-      }
-    }
 
-    function renderizarResultados(lista) {
-      const contenedor = document.getElementById('resultados');
-      contenedor.innerHTML = '';
+        console.error(error);
 
-      if (lista.length === 0) return;
 
-      lista.forEach(function(producto, indice) {
-        const st = estadoCD(producto);
+        contadorGeneral.textContent =
+          'Catálogo no disponible';
 
-        const tarjeta = document.createElement('div');
-        tarjeta.className = 'tarjeta';
-        tarjeta.innerHTML = `
-          <div class="tarjeta-top">
+
+        estado.textContent =
+          'No se pudieron cargar los productos.';
+
+
+        resultados.innerHTML = `
+          <div class="estado-vacio">
+
             <div>
-              <span class="tarjeta-medida">${producto.medida || '—'}</span>
-              <div class="tarjeta-nombre">${producto.nombre}</div>
-              <div class="tarjeta-meta"><b>${producto.marca}</b> · ${producto.tipo}${producto.codigo ? ' · Código: ' + producto.codigo : ''}</div>
+
+              <div class="estado-vacio-icono">
+                ↻
+              </div>
+
+              <h2>
+                No fue posible cargar el catálogo
+              </h2>
+
+              <p>
+                Revisa tu conexión y el estado
+                del Cloudflare Worker.
+              </p>
+
             </div>
-          </div>
-          <div class="tarjeta-bottom">
-            <span class="precio">${isNaN(producto.precio) ? '' : '$' + producto.precio.toLocaleString('es-CL')}</span>
-            <span class="estado-stock ${st.clase}">${st.texto}</span>
-            <button class="btn-sucursales" onclick="verSucursales(${indice})">Sucursales</button>
+
           </div>
         `;
-        contenedor.appendChild(tarjeta);
-      });
-    }
 
-    function verSucursales(indice) {
-      const producto = ultimoFiltrado[indice];
-      let detalle = producto.nombre + '\n\n';
-
-      const conStock = SUCURSALES.filter(function(suc) {
-        return producto.sucursales[suc] && producto.sucursales[suc].cantidad > 0;
-      });
-
-      if (conStock.length === 0) {
-        detalle += 'Sin stock en ninguna sucursal.';
-      } else {
-        conStock.forEach(function(suc) {
-          detalle += suc + ': ' + producto.sucursales[suc].texto + '\n';
-        });
       }
 
-      alert(detalle);
     }
 
-    // Arma una fila plana por producto (datos generales + una columna por sucursal)
-    // y dispara la descarga de un archivo .xlsx con el catálogo completo.
-    function descargarExcel() {
-      const filas = productos.map(function(producto) {
-        const fila = {
-          'Código': producto.codigo,
-          'Nombre': producto.nombre,
-          'Marca': producto.marca,
-          'Tipo': producto.tipo,
-          'Medida': producto.medida,
-          'Precio': isNaN(producto.precio) ? '' : producto.precio
-        };
-        SUCURSALES.forEach(function(suc) {
-          fila[suc] = producto.sucursales[suc] ? producto.sucursales[suc].texto || 0 : 0;
+
+    /* CREAR TARJETA DE PRODUCTO */
+    function crearTarjeta(
+      producto,
+      indice
+    ) {
+
+      const total =
+        obtenerStockTotal(producto);
+
+      const disponibilidad =
+        obtenerEstadoStock(total);
+
+      const marca =
+        producto.marca ||
+        'Marca no informada';
+
+      const tipo =
+        producto.tipo ||
+        'Tipo no informado';
+
+
+      return `
+        <article class="tarjeta">
+
+          <div class="tarjeta-cuerpo">
+
+            <span class="tarjeta-medida">
+              ${
+                escaparHTML(
+                  producto.medida ||
+                  'Sin medida'
+                )
+              }
+            </span>
+
+            <h2 class="tarjeta-nombre">
+              ${
+                escaparHTML(
+                  producto.nombre
+                )
+              }
+            </h2>
+
+            <div class="tarjeta-meta">
+
+              <span class="etiqueta">
+                ${escaparHTML(marca)}
+              </span>
+
+              <span class="etiqueta">
+                ${escaparHTML(tipo)}
+              </span>
+
+            </div>
+
+            <div class="tarjeta-precio">
+
+              <span class="precio-label">
+                Precio referencial
+              </span>
+
+              <span class="precio">
+                ${
+                  formatearPrecio(
+                    producto.precio
+                  )
+                }
+              </span>
+
+            </div>
+
+          </div>
+
+          <div class="tarjeta-pie">
+
+            <span
+              class="estado-stock ${disponibilidad.clase}"
+            >
+              ${disponibilidad.texto}
+            </span>
+
+            <button
+              class="btn-sucursales"
+              type="button"
+              data-indice="${indice}"
+            >
+              Ver sucursales
+            </button>
+
+          </div>
+
+        </article>
+      `;
+
+    }
+
+
+    /* MOSTRAR RESULTADOS */
+    function renderizarResultados(
+      lista,
+      termino
+    ) {
+
+      resultados.innerHTML = '';
+
+
+      if (lista.length === 0) {
+
+        mostrarSinResultados(termino);
+        return;
+
+      }
+
+
+      const visibles =
+        lista.slice(
+          0,
+          MAX_RESULTADOS
+        );
+
+
+      resultados.innerHTML =
+        visibles
+          .map(function(
+            producto,
+            indice
+          ) {
+
+            return crearTarjeta(
+              producto,
+              indice
+            );
+
+          })
+          .join('');
+
+
+      if (
+        lista.length >
+        MAX_RESULTADOS
+      ) {
+
+        resultados.insertAdjacentHTML(
+          'beforeend',
+          `
+            <p class="nota-resultados">
+
+              Se muestran los primeros
+              ${MAX_RESULTADOS}
+              resultados de
+
+              ${
+                lista.length
+                  .toLocaleString('es-CL')
+              }.
+
+              Escribe una medida más específica.
+
+            </p>
+          `
+        );
+
+      }
+
+
+      document
+        .querySelectorAll(
+          '.btn-sucursales'
+        )
+        .forEach(function(boton) {
+
+          boton.addEventListener(
+            'click',
+            function() {
+
+              verSucursales(
+                Number(
+                  boton.dataset.indice
+                )
+              );
+
+            }
+          );
+
         });
-        return fila;
-      });
 
-      const hoja = XLSX.utils.json_to_sheet(filas);
-      const libro = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(libro, hoja, 'Catálogo');
-
-      const fecha = new Date().toISOString().slice(0, 10);
-      XLSX.writeFile(libro, 'catalogo-stock-' + fecha + '.xlsx');
     }
 
-    document.getElementById('btn-descargar').addEventListener('click', descargarExcel);
 
-    document.getElementById('buscador').addEventListener('input', function(e) {
-      const termino = e.target.value.trim().toLowerCase();
+    /* EJECUTAR BÚSQUEDA */
+    function ejecutarBusqueda() {
 
-      if (termino === '') {
+      const terminoOriginal =
+        buscador.value.trim();
+
+      const terminoNormalizado =
+        normalizarTexto(
+          terminoOriginal
+        );
+
+
+      btnLimpiar.classList.toggle(
+        'visible',
+        terminoOriginal.length > 0
+      );
+
+
+      if (!terminoNormalizado) {
+
         ultimoFiltrado = [];
-        renderizarResultados([]);
+
+        estado.textContent =
+          'Escribe una medida para comenzar.';
+
+        mostrarEstadoInicial();
+
+        return;
+
+      }
+
+
+      ultimoFiltrado =
+        productos
+          .filter(function(producto) {
+
+            return producto.busqueda.includes(
+              terminoNormalizado
+            );
+
+          })
+          .sort(function(
+            productoA,
+            productoB
+          ) {
+
+            const medidaA =
+              normalizarTexto(
+                productoA.medida
+              );
+
+            const medidaB =
+              normalizarTexto(
+                productoB.medida
+              );
+
+
+            const comienzaA =
+              medidaA.startsWith(
+                terminoNormalizado
+              )
+                ? 0
+                : 1;
+
+
+            const comienzaB =
+              medidaB.startsWith(
+                terminoNormalizado
+              )
+                ? 0
+                : 1;
+
+
+            if (
+              comienzaA !==
+              comienzaB
+            ) {
+
+              return comienzaA -
+                comienzaB;
+
+            }
+
+
+            return (
+              obtenerStockTotal(
+                productoB
+              ) -
+              obtenerStockTotal(
+                productoA
+              )
+            );
+
+          });
+
+
+      const cantidad =
+        ultimoFiltrado.length;
+
+
+      estado.textContent =
+        cantidad === 1
+          ? '1 producto encontrado.'
+          : cantidad.toLocaleString(
+              'es-CL'
+            ) +
+            ' productos encontrados.';
+
+
+      renderizarResultados(
+        ultimoFiltrado,
+        terminoOriginal
+      );
+
+    }
+
+
+    /* ABRIR MODAL DE SUCURSALES */
+    function verSucursales(indice) {
+
+      const producto =
+        ultimoFiltrado[indice];
+
+
+      if (!producto) {
         return;
       }
 
-      ultimoFiltrado = productos.filter(function(p) {
-        return p.medida.toLowerCase().includes(termino);
+
+      const sucursalesOrdenadas =
+        SUCURSALES
+          .map(function(sucursal) {
+
+            return {
+
+              codigo: sucursal,
+
+              nombre:
+                NOMBRES_SUCURSALES[
+                  sucursal
+                ] ||
+                sucursal,
+
+              stock:
+                producto.sucursales[
+                  sucursal
+                ] ||
+                0
+
+            };
+
+          })
+          .sort(function(
+            sucursalA,
+            sucursalB
+          ) {
+
+            return (
+              sucursalB.stock -
+              sucursalA.stock
+            );
+
+          });
+
+
+      modalTitulo.textContent =
+        producto.medida ||
+        'Stock por sucursal';
+
+
+      modalSubtitulo.textContent =
+        producto.nombre;
+
+
+      listaSucursales.innerHTML =
+        sucursalesOrdenadas
+          .map(function(sucursal) {
+
+            return `
+              <div class="fila-sucursal">
+
+                <span class="sucursal-nombre">
+                  ${
+                    escaparHTML(
+                      sucursal.nombre
+                    )
+                  }
+                </span>
+
+                <span class="sucursal-stock">
+
+                  ${sucursal.stock}
+
+                  ${
+                    sucursal.stock === 1
+                      ? 'unidad'
+                      : 'unidades'
+                  }
+
+                </span>
+
+              </div>
+            `;
+
+          })
+          .join('');
+
+
+      modalFondo.classList.add(
+        'abierto'
+      );
+
+
+      document.body.style.overflow =
+        'hidden';
+
+
+      modalCerrar.focus();
+
+    }
+
+
+    /* CERRAR MODAL */
+    function cerrarModal() {
+
+      modalFondo.classList.remove(
+        'abierto'
+      );
+
+      document.body.style.overflow =
+        '';
+
+    }
+
+
+    /* BUSCAR AL ESCRIBIR */
+    buscador.addEventListener(
+      'input',
+      function() {
+
+        clearTimeout(
+          temporizadorBusqueda
+        );
+
+        temporizadorBusqueda =
+          setTimeout(
+            function() {
+
+              ejecutarBusqueda();
+
+            },
+            160
+          );
+
+      }
+    );
+
+
+    /* BUSCAR CON ENTER */
+    buscador.addEventListener(
+      'keydown',
+      function(evento) {
+
+        if (evento.key === 'Enter') {
+          ejecutarBusqueda();
+        }
+
+      }
+    );
+
+
+    /* BOTÓN BUSCAR */
+    btnBuscar.addEventListener(
+      'click',
+      ejecutarBusqueda
+    );
+
+
+    /* BOTÓN LIMPIAR */
+    btnLimpiar.addEventListener(
+      'click',
+      function() {
+
+        buscador.value = '';
+
+        ejecutarBusqueda();
+
+        buscador.focus();
+
+      }
+    );
+
+
+    /* BÚSQUEDAS RÁPIDAS */
+    document
+      .querySelectorAll('.chip')
+      .forEach(function(chip) {
+
+        chip.addEventListener(
+          'click',
+          function() {
+
+            buscador.value =
+              chip.dataset.medida;
+
+            ejecutarBusqueda();
+
+            buscador.focus();
+
+          }
+        );
+
       });
 
-      renderizarResultados(ultimoFiltrado);
-    });
 
+    /* CERRAR MODAL */
+    modalCerrar.addEventListener(
+      'click',
+      cerrarModal
+    );
+
+
+    /* CERRAR AL HACER CLIC FUERA */
+    modalFondo.addEventListener(
+      'click',
+      function(evento) {
+
+        if (
+          evento.target ===
+          modalFondo
+        ) {
+
+          cerrarModal();
+
+        }
+
+      }
+    );
+
+
+    /* CERRAR CON ESCAPE */
+    document.addEventListener(
+      'keydown',
+      function(evento) {
+
+        if (
+          evento.key === 'Escape' &&
+          modalFondo.classList.contains(
+            'abierto'
+          )
+        ) {
+
+          cerrarModal();
+
+        }
+
+      }
+    );
+
+
+    /* INICIAR CATÁLOGO */
     cargarProductos();
+
   </script>
+
 </body>
 </html>
