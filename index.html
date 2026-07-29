@@ -710,16 +710,28 @@
               : '';
 
 
-          // PARSEO Y LIMPIEZA DE PRECIO
+          // PARSEO Y LIMPIEZA INTELIGENTE DE PRECIO (FORMATO ENTERO)
           let precio = Number.NaN;
           if (idxPrecio !== -1 && columnas[idxPrecio]) {
-            const precioLimpio = columnas[idxPrecio]
-              .replace(/\$/g, '')
-              .replace(/\./g, '')
-              .replace(/,/g, '.')
-              .trim();
+            let valorRaw = columnas[idxPrecio].trim();
 
-            precio = Number.parseFloat(precioLimpio);
+            // 1. Quitar signo $ y espacios
+            valorRaw = valorRaw.replace(/\$/g, '').trim();
+
+            // 2. Si trae comas y puntos (ej: "1.250,50"), quitamos miles y ajustamos decimal
+            if (valorRaw.includes('.') && valorRaw.includes(',')) {
+              valorRaw = valorRaw.replace(/\./g, '').replace(',', '.');
+            } 
+            // 3. Si solo trae puntos (ej: "85.900"), son separadores de miles -> se eliminan
+            else if (valorRaw.includes('.')) {
+              valorRaw = valorRaw.replace(/\./g, '');
+            } 
+            // 4. Si solo trae coma (ej: "85900,00"), reemplazamos por punto decimal
+            else if (valorRaw.includes(',')) {
+              valorRaw = valorRaw.replace(',', '.');
+            }
+
+            precio = Number.parseFloat(valorRaw);
           }
 
 
