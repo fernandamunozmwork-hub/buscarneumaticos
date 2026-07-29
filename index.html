@@ -710,28 +710,24 @@
               : '';
 
 
-          // PARSEO Y LIMPIEZA INTELIGENTE DE PRECIO (FORMATO ENTERO)
+          // --- LIMPIEZA DIRECTA PARA NÚMEROS ENTEROS (49.900 -> 49900) ---
           let precio = Number.NaN;
           if (idxPrecio !== -1 && columnas[idxPrecio]) {
             let valorRaw = columnas[idxPrecio].trim();
 
-            // 1. Quitar signo $ y espacios
+            // Quitamos el signo $ si existe
             valorRaw = valorRaw.replace(/\$/g, '').trim();
 
-            // 2. Si trae comas y puntos (ej: "1.250,50"), quitamos miles y ajustamos decimal
-            if (valorRaw.includes('.') && valorRaw.includes(',')) {
-              valorRaw = valorRaw.replace(/\./g, '').replace(',', '.');
-            } 
-            // 3. Si solo trae puntos (ej: "85.900"), son separadores de miles -> se eliminan
-            else if (valorRaw.includes('.')) {
-              valorRaw = valorRaw.replace(/\./g, '');
-            } 
-            // 4. Si solo trae coma (ej: "85900,00"), reemplazamos por punto decimal
-            else if (valorRaw.includes(',')) {
-              valorRaw = valorRaw.replace(',', '.');
-            }
+            // Si trae decimales con coma al final tipo ",00", los eliminamos
+            valorRaw = valorRaw.replace(/,00$/, '');
 
-            precio = Number.parseFloat(valorRaw);
+            // Eliminamos TODOS los puntos y comas sobrantes para dejar solo dígitos enteros
+            // Ejemplos: "49.900" -> "49900" | "49,900" -> "49900"
+            const soloDigitos = valorRaw.replace(/[^0-9]/g, '');
+
+            if (soloDigitos !== '') {
+              precio = Number.parseInt(soloDigitos, 10);
+            }
           }
 
 
