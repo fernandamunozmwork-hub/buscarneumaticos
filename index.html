@@ -28,35 +28,73 @@
 
   <!-- CSS EXTERNO -->
   <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* Estilo para el botón de descarga */
+    .btn-descargar-excel {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 10px 18px;
+      background-color: #107c41;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn-descargar-excel:hover {
+      background-color: #0b5c30;
+      transform: translateY(-1px);
+    }
+
+    .btn-descargar-excel:active {
+      transform: translateY(0);
+    }
+  </style>
 </head>
 
 <body>
 
   <header class="hero">
-  <div class="hero-contenido">
+    <div class="hero-contenido">
 
-    <a
-      class="marca-logo"
-      href="#"
-      aria-label="Llantas del Pacífico"
-    >
-      <img
-        src="assets/logo.svg"
-        alt="Llantas del Pacífico"
+      <a
+        class="marca-logo"
+        href="#"
+        aria-label="Llantas del Pacífico"
       >
-    </a>
+        <img
+          src="assets/logo.svg"
+          alt="Llantas del Pacífico"
+        >
+      </a>
 
-    <h1>
-      Stock <span>Cardepot</span>
-    </h1>
+      <h1>
+        Stock <span>Cardepot</span>
+      </h1>
 
-    <p class="subtitulo">
-      Consulta medidas, precios y disponibilidad de neumáticos
-      en nuestras sucursales.
-    </p>
+      <p class="subtitulo">
+        Consulta medidas, precios y disponibilidad de neumáticos
+        en nuestras sucursales.
+      </p>
 
-  </div>
-</header>
+      <!-- BOTÓN DE DESCARGA DE EXCEL -->
+      <button
+        id="btnDescargarExcel"
+        class="btn-descargar-excel"
+        type="button"
+      >
+        <span aria-hidden="true">📥</span> Descargar Excel / CSV
+      </button>
+
+    </div>
+  </header>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main>
@@ -312,6 +350,7 @@
 
     let productos = [];
     let ultimoFiltrado = [];
+    let textoCSVOriginal = '';
     let temporizadorBusqueda;
 
 
@@ -333,6 +372,9 @@
 
     const btnBuscar =
       document.getElementById('btnBuscar');
+
+    const btnDescargarExcel =
+      document.getElementById('btnDescargarExcel');
 
     const modalFondo =
       document.getElementById('modalFondo');
@@ -575,9 +617,9 @@
 
         }
 
-        const texto = await respuesta.text();
+        textoCSVOriginal = await respuesta.text();
 
-        const lineas = texto
+        const lineas = textoCSVOriginal
           .split(/\r?\n/)
           .filter(function(linea) {
 
@@ -710,23 +752,24 @@
               : '';
 
 
-          // --- LIMPIEZA DIRECTA PARA NÚMEROS ENTEROS (49.900 -> 49900) ---
+          // --- PARSEO DE PRECIO EN FORMATO EXCEL ($24,329.00) ---
           let precio = Number.NaN;
           if (idxPrecio !== -1 && columnas[idxPrecio]) {
             let valorRaw = columnas[idxPrecio].trim();
 
-            // Quitamos el signo $ si existe
+            // 1. Quitar signo $ y espacios
             valorRaw = valorRaw.replace(/\$/g, '').trim();
 
-            // Si trae decimales con coma al final tipo ",00", los eliminamos
-            valorRaw = valorRaw.replace(/,00$/, '');
+            // 2. Descartar los decimales si vienen precedidos por punto (.00)
+            if (valorRaw.includes('.')) {
+              valorRaw = valorRaw.split('.')[0];
+            }
 
-            // Eliminamos TODOS los puntos y comas sobrantes para dejar solo dígitos enteros
-            // Ejemplos: "49.900" -> "49900" | "49,900" -> "49900"
-            const soloDigitos = valorRaw.replace(/[^0-9]/g, '');
+            // 3. Quitar comas de miles: "24,329" -> "24329"
+            valorRaw = valorRaw.replace(/,/g, '');
 
-            if (soloDigitos !== '') {
-              precio = Number.parseInt(soloDigitos, 10);
+            if (valorRaw !== '') {
+              precio = Number.parseInt(valorRaw, 10);
             }
           }
 
@@ -805,6 +848,34 @@
         `;
 
       }
+
+    }
+
+
+    /* DESCARGAR ARCHIVO DE EXCEL / CSV */
+    function descargarExcel() {
+
+      if (!textoCSVOriginal) {
+        alert('El catálogo aún no se ha cargado.');
+        return;
+      }
+
+      const bom = '\uFEFF';
+      const blob = new Blob([bom + textoCSVOriginal], {
+        type: 'text/csv;charset=utf-8;'
+      });
+
+      const url = URL.createObjectURL(blob);
+      const enlace = document.createElement('a');
+
+      enlace.href = url;
+      enlace.setAttribute('download', 'Stock_Cardepot.csv');
+
+      document.body.appendChild(enlace);
+      enlace.click();
+
+      document.body.removeChild(enlace);
+      URL.revokeObjectURL(url);
 
     }
 
@@ -1288,6 +1359,13 @@
         buscador.focus();
 
       }
+    );
+
+
+    /* BOTÓN DESCARGAR EXCEL */
+    btnDescargarExcel.addEventListener(
+      'click',
+      descargarExcel
     );
 
 
