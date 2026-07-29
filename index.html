@@ -618,8 +618,13 @@
         const idxMedida =
           encabezados.indexOf('pp');
 
-        const idxPrecio =
-          encabezados.indexOf('Precio');
+        // Búsqueda flexible de la columna precio
+        let idxPrecio = encabezados.indexOf('precio');
+        if (idxPrecio === -1) {
+          idxPrecio = encabezados.findIndex(function(h) {
+            return h.includes('precio') || h.includes('p.venta') || h.includes('val');
+          });
+        }
 
 
         const idxSucursales = {};
@@ -705,12 +710,17 @@
               : '';
 
 
-          const precio =
-            idxPrecio !== -1
-              ? Number.parseFloat(
-                  columnas[idxPrecio]
-                )
-              : Number.NaN;
+          // PARSEO Y LIMPIEZA DE PRECIO
+          let precio = Number.NaN;
+          if (idxPrecio !== -1 && columnas[idxPrecio]) {
+            const precioLimpio = columnas[idxPrecio]
+              .replace(/\$/g, '')
+              .replace(/\./g, '')
+              .replace(/,/g, '.')
+              .trim();
+
+            precio = Number.parseFloat(precioLimpio);
+          }
 
 
           productos.push({
