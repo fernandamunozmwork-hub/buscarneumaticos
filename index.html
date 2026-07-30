@@ -1247,6 +1247,14 @@
         sucursalesOrdenadas
           .map(function(sucursal) {
 
+            // MODIFICACIÓN: Si es mayor a 25 dice DISPONIBLE, de lo contrario muestra la cantidad
+            let textoStock = '';
+            if (sucursal.stock > 25) {
+              textoStock = 'DISPONIBLE';
+            } else {
+              textoStock = sucursal.stock + (sucursal.stock === 1 ? ' unidad' : ' unidades');
+            }
+
             return `
               <div class="fila-sucursal">
 
@@ -1260,13 +1268,7 @@
 
                 <span class="sucursal-stock">
 
-                  ${sucursal.stock}
-
-                  ${
-                    sucursal.stock === 1
-                      ? 'unidad'
-                      : 'unidades'
-                  }
+                  ${textoStock}
 
                 </span>
 
