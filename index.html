@@ -852,7 +852,7 @@
     }
 
 
-    /* DESCARGAR ARCHIVO DE EXCEL / CSV */
+    /* DESCARGAR ARCHIVO DE EXCEL / CSV CON STOCK MAYOR A 25 COMO "DISPONIBLE" */
     function descargarExcel() {
 
       if (!textoCSVOriginal) {
@@ -860,8 +860,47 @@
         return;
       }
 
+      const lineas = textoCSVOriginal.split(/\r?\n/);
+      if (lineas.length === 0) return;
+
+      const encabezados = parsearLineaCSV(lineas[0]).map(h => h.trim().toLowerCase());
+
+      // Mapear los índices de las columnas de sucursales
+      const indicesSucursales = [];
+      SUCURSALES.forEach(sucursal => {
+        const idx = encabezados.indexOf(sucursal.toLowerCase());
+        if (idx !== -1) {
+          indicesSucursales.push(idx);
+        }
+      });
+
+      // Procesar cada fila de datos del CSV
+      const lineasModificadas = lineas.map((linea, index) => {
+        if (index === 0 || !linea.trim()) return linea; // Respetar la cabecera y líneas vacías
+
+        const columnas = parsearLineaCSV(linea);
+
+        indicesSucursales.forEach(idx => {
+          if (columnas[idx] !== undefined) {
+            const num = Number.parseInt(columnas[idx].trim(), 10);
+            if (!Number.isNaN(num) && num > 25) {
+              columnas[idx] = 'DISPONIBLE';
+            }
+          }
+        });
+
+        // Formatear columnas para CSV (entrecomillar si contienen comas o comillas)
+        return columnas.map(col => {
+          if (col.includes(',') || col.includes('"') || col.includes('\n')) {
+            return `"${col.replace(/"/g, '""')}"`;
+          }
+          return col;
+        }).join(',');
+      });
+
+      const csvFinal = lineasModificadas.join('\r\n');
       const bom = '\uFEFF';
-      const blob = new Blob([bom + textoCSVOriginal], {
+      const blob = new Blob([bom + csvFinal], {
         type: 'text/csv;charset=utf-8;'
       });
 
@@ -1247,7 +1286,6 @@
         sucursalesOrdenadas
           .map(function(sucursal) {
 
-            // MODIFICACIÓN: Si es mayor a 25 dice DISPONIBLE, de lo contrario muestra la cantidad
             let textoStock = '';
             if (sucursal.stock > 25) {
               textoStock = 'DISPONIBLE';
