@@ -56,6 +56,18 @@
     .btn-descargar-excel:active {
       transform: translateY(0);
     }
+
+    /* Estilo para la fecha y hora de actualización */
+    .fecha-actualizacion {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: #a0a0a0;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
   </style>
 </head>
 
@@ -83,6 +95,13 @@
         Consulta medidas, precios y disponibilidad de neumáticos
         en nuestras sucursales.
       </p>
+
+      <!-- FECHA Y HORA DE ACTUALIZACIÓN DEL STOCK -->
+      <span id="fechaActualizacion" class="fecha-actualizacion">
+        Cargando fecha de actualización...
+      </span>
+
+      <br>
 
       <!-- BOTÓN DE DESCARGA DE EXCEL -->
       <button
@@ -376,6 +395,9 @@
     const btnDescargarExcel =
       document.getElementById('btnDescargarExcel');
 
+    const fechaActualizacion =
+      document.getElementById('fechaActualizacion');
+
     const modalFondo =
       document.getElementById('modalFondo');
 
@@ -617,6 +639,21 @@
 
         }
 
+        // --- FECHA Y HORA DE ACTUALIZACIÓN DEL ARCHIVO / SERVIDOR ---
+        const fechaHeader = respuesta.headers.get('last-modified');
+        const fechaObj = fechaHeader ? new Date(fechaHeader) : new Date();
+
+        const opcionesFechaHora = {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        };
+
+        fechaActualizacion.textContent = 
+          '📅 Actualizado el: ' + fechaObj.toLocaleString('es-CL', opcionesFechaHora) + ' hrs';
+
         textoCSVOriginal = await respuesta.text();
 
         const lineas = textoCSVOriginal
@@ -824,6 +861,9 @@
           'No se pudieron cargar los productos.';
 
 
+        fechaActualizacion.textContent = '📅 Actualización no disponible';
+
+
         resultados.innerHTML = `
           <div class="estado-vacio">
 
@@ -876,7 +916,7 @@
 
       // Procesar cada fila de datos del CSV
       const lineasModificadas = lineas.map((linea, index) => {
-        if (index === 0 || !linea.trim()) return linea; // Respetar la cabecera y líneas vacías
+        if (index === 0 || !linea.trim()) return linea;
 
         const columnas = parsearLineaCSV(linea);
 
@@ -889,7 +929,6 @@
           }
         });
 
-        // Formatear columnas para CSV (entrecomillar si contienen comas o comillas)
         return columnas.map(col => {
           if (col.includes(',') || col.includes('"') || col.includes('\n')) {
             return `"${col.replace(/"/g, '""')}"`;
