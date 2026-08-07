@@ -2,29 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#111111">
-
   <title>Stock Cardepot | Llantas del Pacífico</title>
 
   <!-- FUENTES -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-
-  <link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
-  >
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@600;700&display=swap"
-    rel="stylesheet"
-  >
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
 
   <!-- CSS EXTERNO -->
   <link rel="stylesheet" href="styles.css">
@@ -75,25 +60,14 @@
 
   <header class="hero">
     <div class="hero-contenido">
-
-      <a
-        class="marca-logo"
-        href="#"
-        aria-label="Llantas del Pacífico"
-      >
-        <img
-          src="assets/logo.svg"
-          alt="Llantas del Pacífico"
-        >
+      <a class="marca-logo" href="#" aria-label="Llantas del Pacífico">
+        <img src="assets/logo.svg" alt="Llantas del Pacífico">
       </a>
 
-      <h1>
-        Stock <span>Cardepot</span>
-      </h1>
+      <h1>Stock <span>Cardepot</span></h1>
 
       <p class="subtitulo">
-        Consulta medidas, precios y disponibilidad de neumáticos
-        en nuestras sucursales.
+        Consulta medidas, precios y disponibilidad de neumáticos en nuestras sucursales.
       </p>
 
       <!-- FECHA Y HORA DE ACTUALIZACIÓN DEL STOCK -->
@@ -104,248 +78,87 @@
       <br>
 
       <!-- BOTÓN DE DESCARGA DE EXCEL -->
-      <button
-        id="btnDescargarExcel"
-        class="btn-descargar-excel"
-        type="button"
-      >
+      <button id="btnDescargarExcel" class="btn-descargar-excel" type="button">
         <span aria-hidden="true">📥</span> Descargar Excel / CSV
       </button>
-
     </div>
   </header>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main>
-
     <!-- PANEL DE BÚSQUEDA -->
     <section class="panel-busqueda">
-
       <div class="panel-titulo">
-
-        <label for="buscador">
-          ¿Qué medida necesitas?
-        </label>
-
-        <span
-          id="contadorGeneral"
-          class="contador-general"
-        >
-          Cargando catálogo...
-        </span>
-
+        <label for="buscador">¿Qué medida necesitas?</label>
+        <span id="contadorGeneral" class="contador-general">Cargando catálogo...</span>
       </div>
-
 
       <!-- BUSCADOR -->
       <div class="buscador-fila">
-
-        <span
-          class="icono-busqueda"
-          aria-hidden="true"
-        >
-          🔍
-        </span>
-
-        <input
-          id="buscador"
-          type="search"
-          inputmode="search"
-          placeholder="Ejemplo: 175/70 R13"
-          autocomplete="off"
-          aria-describedby="estado"
-        >
-
-        <button
-          id="btnLimpiar"
-          class="btn-limpiar"
-          type="button"
-          aria-label="Limpiar búsqueda"
-        >
-          ×
-        </button>
-
-        <button
-          id="btnBuscar"
-          class="btn-buscar"
-          type="button"
-        >
-          Buscar
-        </button>
-
+        <span class="icono-busqueda" aria-hidden="true">🔍</span>
+        <input id="buscador" type="search" inputmode="search" placeholder="Ejemplo: 175/70 R13 o SKU" autocomplete="off" aria-describedby="estado">
+        <button id="btnLimpiar" class="btn-limpiar" type="button" aria-label="Limpiar búsqueda">×</button>
+        <button id="btnBuscar" class="btn-buscar" type="button">Buscar</button>
       </div>
-
 
       <!-- BÚSQUEDAS RÁPIDAS -->
       <div class="sugerencias">
-
-        <span class="sugerencias-texto">
-          Búsquedas rápidas:
-        </span>
-
-        <button
-          class="chip"
-          type="button"
-          data-medida="175/70 R13"
-        >
-          175/70 R13
-        </button>
-
-        <button
-          class="chip"
-          type="button"
-          data-medida="185/65 R15"
-        >
-          185/65 R15
-        </button>
-
-        <button
-          class="chip"
-          type="button"
-          data-medida="205/55 R16"
-        >
-          205/55 R16
-        </button>
-
-        <button
-          class="chip"
-          type="button"
-          data-medida="265/65 R17"
-        >
-          265/65 R17
-        </button>
-
+        <span class="sugerencias-texto">Búsquedas rápidas:</span>
+        <button class="chip" type="button" data-medida="175/70 R13">175/70 R13</button>
+        <button class="chip" type="button" data-medida="185/65 R15">185/65 R15</button>
+        <button class="chip" type="button" data-medida="205/55 R16">205/55 R16</button>
+        <button class="chip" type="button" data-medida="265/65 R17">265/65 R17</button>
       </div>
-
     </section>
-
 
     <!-- ESTADO DE BÚSQUEDA -->
     <div class="barra-estado">
-
-      <p
-        id="estado"
-        aria-live="polite"
-      >
-        Cargando productos...
-      </p>
-
+      <p id="estado" aria-live="polite">Cargando productos...</p>
       <div class="leyenda">
-
-        <span>
-          <i class="punto verde"></i>
-          Disponible
-        </span>
-
-        <span>
-          <i class="punto ambar"></i>
-          Stock bajo
-        </span>
-
-        <span>
-          <i class="punto rojo"></i>
-          Sin stock
-        </span>
-
+        <span><i class="punto verde"></i> Disponible</span>
+        <span><i class="punto ambar"></i> Stock bajo</span>
+        <span><i class="punto rojo"></i> Sin stock</span>
       </div>
-
     </div>
 
-
     <!-- RESULTADOS -->
-    <section
-      id="resultados"
-      aria-live="polite"
-    >
-
+    <section id="resultados" aria-live="polite">
       <div class="cargando">
         <div class="skeleton"></div>
         <div class="skeleton"></div>
       </div>
-
     </section>
-
   </main>
 
-
   <!-- MODAL DE SUCURSALES -->
-  <div
-    id="modalFondo"
-    class="modal-fondo"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="modalTitulo"
-  >
-
+  <div id="modalFondo" class="modal-fondo" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
     <div class="modal">
-
       <div class="modal-cabecera">
-
         <div>
-
-          <h2 id="modalTitulo">
-            Stock por sucursal
-          </h2>
-
+          <h2 id="modalTitulo">Stock por sucursal</h2>
           <p id="modalSubtitulo"></p>
-
         </div>
-
-        <button
-          id="modalCerrar"
-          class="modal-cerrar"
-          type="button"
-          aria-label="Cerrar ventana"
-        >
-          ×
-        </button>
-
+        <button id="modalCerrar" class="modal-cerrar" type="button" aria-label="Cerrar ventana">×</button>
       </div>
-
       <div class="modal-contenido">
-
-        <div
-          id="listaSucursales"
-          class="lista-sucursales"
-        ></div>
-
+        <div id="listaSucursales" class="lista-sucursales"></div>
       </div>
-
     </div>
-
   </div>
 
-
   <script>
-
-    /* CLOUDFLARE WORKER */
-    const URL_DATOS =
-      'https://stock-neumaticos.fernanda-munozm-work.workers.dev/';
-
+    /* CLOUDFLARE WORKER (Entrega stock + precios cruzados) */
+    const URL_DATOS = 'https://stock-neumaticos.fernanda-munozm-work.workers.dev/';
 
     /* MÁXIMO DE PRODUCTOS MOSTRADOS */
     const MAX_RESULTADOS = 80;
 
-
     /* SUCURSALES DEL ARCHIVO CSV */
     const SUCURSALES = [
-      'CD',
-      'estoril',
-      'ossa',
-      'movicenter',
-      'diezjulio',
-      'mapocho',
-      'lascondes',
-      'granav',
-      'plazaoeste',
-      'macul',
-      'dominica',
-      'catorcedelafama',
-      'vinadelmar',
-      'vicuñamackenna',
-      'goodyear'
+      'CD', 'estoril', 'ossa', 'movicenter', 'diezjulio', 'mapocho',
+      'lascondes', 'granav', 'plazaoeste', 'macul', 'dominica',
+      'catorcedelafama', 'vinadelmar', 'vicuñamackenna', 'goodyear'
     ];
-
 
     /* NOMBRES VISIBLES DE SUCURSALES */
     const NOMBRES_SUCURSALES = {
@@ -366,289 +179,146 @@
       goodyear: 'Goodyear'
     };
 
-
     let productos = [];
     let ultimoFiltrado = [];
     let textoCSVOriginal = '';
     let temporizadorBusqueda;
 
-
     /* ELEMENTOS HTML */
-    const buscador =
-      document.getElementById('buscador');
-
-    const estado =
-      document.getElementById('estado');
-
-    const resultados =
-      document.getElementById('resultados');
-
-    const contadorGeneral =
-      document.getElementById('contadorGeneral');
-
-    const btnLimpiar =
-      document.getElementById('btnLimpiar');
-
-    const btnBuscar =
-      document.getElementById('btnBuscar');
-
-    const btnDescargarExcel =
-      document.getElementById('btnDescargarExcel');
-
-    const fechaActualizacion =
-      document.getElementById('fechaActualizacion');
-
-    const modalFondo =
-      document.getElementById('modalFondo');
-
-    const modalCerrar =
-      document.getElementById('modalCerrar');
-
-    const modalTitulo =
-      document.getElementById('modalTitulo');
-
-    const modalSubtitulo =
-      document.getElementById('modalSubtitulo');
-
-    const listaSucursales =
-      document.getElementById('listaSucursales');
-
+    const buscador = document.getElementById('buscador');
+    const estado = document.getElementById('estado');
+    const resultados = document.getElementById('resultados');
+    const contadorGeneral = document.getElementById('contadorGeneral');
+    const btnLimpiar = document.getElementById('btnLimpiar');
+    const btnBuscar = document.getElementById('btnBuscar');
+    const btnDescargarExcel = document.getElementById('btnDescargarExcel');
+    const fechaActualizacion = document.getElementById('fechaActualizacion');
+    const modalFondo = document.getElementById('modalFondo');
+    const modalCerrar = document.getElementById('modalCerrar');
+    const modalTitulo = document.getElementById('modalTitulo');
+    const modalSubtitulo = document.getElementById('modalSubtitulo');
+    const listaSucursales = document.getElementById('listaSucursales');
 
     /* LEER CORRECTAMENTE CADA FILA DEL CSV */
     function parsearLineaCSV(linea) {
-
       const resultado = [];
-
       let actual = '';
       let entreComillas = false;
 
       for (let i = 0; i < linea.length; i++) {
-
         const caracter = linea[i];
-
         if (caracter === '"') {
-
-          if (
-            entreComillas &&
-            linea[i + 1] === '"'
-          ) {
-
+          if (entreComillas && linea[i + 1] === '"') {
             actual += '"';
             i++;
-
           } else {
-
             entreComillas = !entreComillas;
-
           }
-
-        } else if (
-          caracter === ',' &&
-          !entreComillas
-        ) {
-
+        } else if (caracter === ',' && !entreComillas) {
           resultado.push(actual);
           actual = '';
-
         } else {
-
           actual += caracter;
-
         }
-
       }
-
       resultado.push(actual);
-
       return resultado;
-
     }
-
 
     /* NORMALIZAR TEXTO PARA BUSCAR */
     function normalizarTexto(valor) {
-
       return String(valor || '')
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
         .replace(/[^a-z0-9]/g, '');
-
     }
-
 
     /* PROTEGER TEXTO DEL CSV */
     function escaparHTML(valor) {
-
       return String(valor ?? '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
-
     }
-
 
     /* CALCULAR STOCK TOTAL */
     function obtenerStockTotal(producto) {
-
-      return SUCURSALES.reduce(
-        function(total, sucursal) {
-
-          return total +
-            (producto.sucursales[sucursal] || 0);
-
-        },
-        0
-      );
-
+      return SUCURSALES.reduce(function(total, sucursal) {
+        return total + (producto.sucursales[sucursal] || 0);
+      }, 0);
     }
-
 
     /* DEFINIR DISPONIBILIDAD */
     function obtenerEstadoStock(total) {
-
       if (total > 25) {
-
-        return {
-          clase: 'disponible',
-          texto: 'Disponible'
-        };
-
+        return { clase: 'disponible', texto: 'Disponible' };
       }
-
       if (total > 0) {
-
         return {
           clase: 'poco',
-          texto:
-            total +
-            (total === 1
-              ? ' unidad'
-              : ' unidades')
+          texto: total + (total === 1 ? ' unidad' : ' unidades')
         };
-
       }
-
-      return {
-        clase: 'sin',
-        texto: 'Sin stock'
-      };
-
+      return { clase: 'sin', texto: 'Sin stock' };
     }
-
 
     /* FORMATEAR PRECIO */
     function formatearPrecio(precio) {
-
-      if (Number.isNaN(precio)) {
+      if (Number.isNaN(precio) || precio === null || precio === undefined) {
         return 'Consultar';
       }
-
-      return '$' +
-        Math.round(precio).toLocaleString('es-CL');
-
+      return '$' + Math.round(precio).toLocaleString('es-CL');
     }
-
 
     /* MOSTRAR MENSAJE INICIAL */
     function mostrarEstadoInicial() {
-
       resultados.innerHTML = `
         <div class="estado-vacio">
-
           <div>
-
-            <div class="estado-vacio-icono">
-              🔍
-            </div>
-
-            <h2>
-              Busca una medida de neumático
-            </h2>
-
+            <div class="estado-vacio-icono">🔍</div>
+            <h2>Busca una medida de neumático o SKU</h2>
             <p>
-              Puedes escribirla con o sin espacios.
-
-              Por ejemplo:
-
-              <strong>175/70 R13</strong>
-
-              o
-
-              <strong>1757013</strong>.
+              Puedes escribirla con o sin espacios. Por ejemplo:
+              <strong>175/70 R13</strong> o <strong>1757013</strong>.
             </p>
-
           </div>
-
         </div>
       `;
-
     }
-
 
     /* MOSTRAR MENSAJE SIN RESULTADOS */
     function mostrarSinResultados(termino) {
-
       resultados.innerHTML = `
         <div class="estado-vacio">
-
           <div>
-
-            <div class="estado-vacio-icono">
-              !
-            </div>
-
-            <h2>
-              No encontramos coincidencias
-            </h2>
-
+            <div class="estado-vacio-icono">!</div>
+            <h2>No encontramos coincidencias</h2>
             <p>
-              No hay productos para
-              “${escaparHTML(termino)}”.
-
+              No hay productos para “${escaparHTML(termino)}”.
               Revisa la medida o escribe solo una parte.
             </p>
-
           </div>
-
         </div>
       `;
-
     }
 
-
-    /* CARGAR PRODUCTOS DESDE EL WORKER */
+    /* CARGAR PRODUCTOS DESDE EL WORKER CONSOLIDADO */
     async function cargarProductos() {
-
       try {
-
-        const respuesta = await fetch(
-          URL_DATOS,
-          {
-            cache: 'no-store'
-          }
-        );
+        const respuesta = await fetch(URL_DATOS, { cache: 'no-store' });
 
         if (!respuesta.ok) {
-
-          throw new Error(
-            'No se pudo leer la información'
-          );
-
+          throw new Error('No se pudo leer la información del Worker');
         }
 
-        // --- FECHA Y HORA DE ACTUALIZACIÓN DEL ARCHIVO / SERVIDOR ---
         const fechaHeader = respuesta.headers.get('last-modified');
         const fechaObj = fechaHeader ? new Date(fechaHeader) : new Date();
-
         const opcionesFechaHora = {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
+          day: '2-digit', month: '2-digit', year: 'numeric',
+          hour: '2-digit', minute: '2-digit'
         };
 
         fechaActualizacion.textContent = 
@@ -658,243 +328,101 @@
 
         const lineas = textoCSVOriginal
           .split(/\r?\n/)
-          .filter(function(linea) {
-
-            return linea.trim() !== '';
-
-          });
-
+          .filter(linea => linea.trim() !== '');
 
         if (lineas.length < 2) {
-
-          throw new Error(
-            'El catálogo está vacío'
-          );
-
+          throw new Error('El catálogo está vacío');
         }
 
+        const encabezados = parsearLineaCSV(lineas[0]).map(h => h.trim().toLowerCase());
 
-        const encabezados =
-          parsearLineaCSV(lineas[0])
-            .map(function(encabezado) {
+        const idxSku = encabezados.indexOf('sku');
+        const idxNombre = encabezados.indexOf('nombre');
+        const idxMarca = encabezados.indexOf('marca');
+        const idxTipo = encabezados.indexOf('tipo');
+        const idxMedida = encabezados.indexOf('pp');
 
-              return encabezado
-                .trim()
-                .toLowerCase();
-
-            });
-
-
-        const idxNombre =
-          encabezados.indexOf('nombre');
-
-        const idxMarca =
-          encabezados.indexOf('marca');
-
-        const idxTipo =
-          encabezados.indexOf('tipo');
-
-        const idxMedida =
-          encabezados.indexOf('pp');
-
-        // Búsqueda flexible de la columna precio
+        // Búsqueda de columna de precio en el CSV que entrega el Worker
         let idxPrecio = encabezados.indexOf('precio');
         if (idxPrecio === -1) {
-          idxPrecio = encabezados.findIndex(function(h) {
-            return h.includes('precio') || h.includes('p.venta') || h.includes('val');
-          });
+          idxPrecio = encabezados.findIndex(h => h.includes('precio') || h.includes('p.venta') || h.includes('val'));
         }
 
-
         const idxSucursales = {};
-
-
-        SUCURSALES.forEach(
-          function(sucursal) {
-
-            idxSucursales[sucursal] =
-              encabezados.indexOf(
-                sucursal.toLowerCase()
-              );
-
-          }
-        );
-
+        SUCURSALES.forEach(sucursal => {
+          idxSucursales[sucursal] = encabezados.indexOf(sucursal.toLowerCase());
+        });
 
         productos = [];
 
+        for (let i = 1; i < lineas.length; i++) {
+          const columnas = parsearLineaCSV(lineas[i]);
+          const nombre = columnas[idxNombre] ? columnas[idxNombre].trim() : '';
 
-        for (
-          let i = 1;
-          i < lineas.length;
-          i++
-        ) {
+          if (!nombre) continue;
 
-          const columnas =
-            parsearLineaCSV(lineas[i]);
-
-
-          const nombre =
-            columnas[idxNombre]
-              ? columnas[idxNombre].trim()
-              : '';
-
-
-          if (!nombre) {
-            continue;
-          }
-
+          const sku = idxSku !== -1 && columnas[idxSku] ? columnas[idxSku].trim() : '';
 
           const sucursales = {};
+          SUCURSALES.forEach(sucursal => {
+            const indice = idxSucursales[sucursal];
+            const numero = indice !== -1 ? Number.parseInt(columnas[indice], 10) : 0;
+            sucursales[sucursal] = Number.isNaN(numero) ? 0 : numero;
+          });
 
+          const medida = columnas[idxMedida] ? columnas[idxMedida].trim() : '';
+          const marca = columnas[idxMarca] ? columnas[idxMarca].trim() : '';
+          const tipo = columnas[idxTipo] ? columnas[idxTipo].trim() : '';
 
-          SUCURSALES.forEach(
-            function(sucursal) {
-
-              const indice =
-                idxSucursales[sucursal];
-
-              const numero =
-                indice !== -1
-                  ? Number.parseInt(
-                      columnas[indice],
-                      10
-                    )
-                  : 0;
-
-              sucursales[sucursal] =
-                Number.isNaN(numero)
-                  ? 0
-                  : numero;
-
-            }
-          );
-
-
-          const medida =
-            columnas[idxMedida]
-              ? columnas[idxMedida].trim()
-              : '';
-
-
-          const marca =
-            columnas[idxMarca]
-              ? columnas[idxMarca].trim()
-              : '';
-
-
-          const tipo =
-            columnas[idxTipo]
-              ? columnas[idxTipo].trim()
-              : '';
-
-
-          // --- PARSEO DE PRECIO EN FORMATO EXCEL ($24,329.00) ---
+          // Parseo de precio
           let precio = Number.NaN;
           if (idxPrecio !== -1 && columnas[idxPrecio]) {
             let valorRaw = columnas[idxPrecio].trim();
-
-            // 1. Quitar signo $ y espacios
             valorRaw = valorRaw.replace(/\$/g, '').trim();
-
-            // 2. Descartar los decimales si vienen precedidos por punto (.00)
             if (valorRaw.includes('.')) {
               valorRaw = valorRaw.split('.')[0];
             }
-
-            // 3. Quitar comas de miles: "24,329" -> "24329"
             valorRaw = valorRaw.replace(/,/g, '');
-
             if (valorRaw !== '') {
               precio = Number.parseInt(valorRaw, 10);
             }
           }
 
-
           productos.push({
-
+            sku: sku,
             nombre: nombre,
             marca: marca,
             tipo: tipo,
             medida: medida,
             precio: precio,
             sucursales: sucursales,
-
-            busqueda: normalizarTexto(
-              medida +
-              ' ' +
-              nombre +
-              ' ' +
-              marca +
-              ' ' +
-              tipo
-            )
-
+            busqueda: normalizarTexto(medida + ' ' + nombre + ' ' + marca + ' ' + tipo + ' ' + sku)
           });
-
         }
 
-
-        contadorGeneral.textContent =
-          productos.length.toLocaleString(
-            'es-CL'
-          ) +
-          ' productos en el catálogo';
-
-
-        estado.textContent =
-          'Escribe una medida para comenzar.';
-
-
+        contadorGeneral.textContent = productos.length.toLocaleString('es-CL') + ' productos en el catálogo';
+        estado.textContent = 'Escribe una medida para comenzar.';
         mostrarEstadoInicial();
 
       } catch (error) {
-
         console.error(error);
-
-
-        contadorGeneral.textContent =
-          'Catálogo no disponible';
-
-
-        estado.textContent =
-          'No se pudieron cargar los productos.';
-
-
+        contadorGeneral.textContent = 'Catálogo no disponible';
+        estado.textContent = 'No se pudieron cargar los productos.';
         fechaActualizacion.textContent = '📅 Actualización no disponible';
-
-
         resultados.innerHTML = `
           <div class="estado-vacio">
-
             <div>
-
-              <div class="estado-vacio-icono">
-                ↻
-              </div>
-
-              <h2>
-                No fue posible cargar el catálogo
-              </h2>
-
-              <p>
-                Revisa tu conexión y el estado
-                del Cloudflare Worker.
-              </p>
-
+              <div class="estado-vacio-icono">↻</div>
+              <h2>No fue posible cargar el catálogo</h2>
+              <p>Revisa tu conexión y el estado del Cloudflare Worker.</p>
             </div>
-
           </div>
         `;
-
       }
-
     }
 
-
-    /* DESCARGAR ARCHIVO DE EXCEL / CSV CON STOCK MAYOR A 25 COMO "DISPONIBLE" */
+    /* DESCARGAR ARCHIVO DE EXCEL / CSV */
     function descargarExcel() {
-
       if (!textoCSVOriginal) {
         alert('El catálogo aún no se ha cargado.');
         return;
@@ -905,16 +433,12 @@
 
       const encabezados = parsearLineaCSV(lineas[0]).map(h => h.trim().toLowerCase());
 
-      // Mapear los índices de las columnas de sucursales
       const indicesSucursales = [];
       SUCURSALES.forEach(sucursal => {
         const idx = encabezados.indexOf(sucursal.toLowerCase());
-        if (idx !== -1) {
-          indicesSucursales.push(idx);
-        }
+        if (idx !== -1) indicesSucursales.push(idx);
       });
 
-      // Procesar cada fila de datos del CSV
       const lineasModificadas = lineas.map((linea, index) => {
         if (index === 0 || !linea.trim()) return linea;
 
@@ -939,586 +463,209 @@
 
       const csvFinal = lineasModificadas.join('\r\n');
       const bom = '\uFEFF';
-      const blob = new Blob([bom + csvFinal], {
-        type: 'text/csv;charset=utf-8;'
-      });
+      const blob = new Blob([bom + csvFinal], { type: 'text/csv;charset=utf-8;' });
 
       const url = URL.createObjectURL(blob);
       const enlace = document.createElement('a');
 
       enlace.href = url;
       enlace.setAttribute('download', 'Stock_Cardepot.csv');
-
       document.body.appendChild(enlace);
       enlace.click();
-
       document.body.removeChild(enlace);
       URL.revokeObjectURL(url);
-
     }
 
-
     /* CREAR TARJETA DE PRODUCTO */
-    function crearTarjeta(
-      producto,
-      indice
-    ) {
-
-      const total =
-        obtenerStockTotal(producto);
-
-      const disponibilidad =
-        obtenerEstadoStock(total);
-
-      const marca =
-        producto.marca ||
-        'Marca no informada';
-
-      const tipo =
-        producto.tipo ||
-        'Tipo no informado';
-
+    function crearTarjeta(producto, indice) {
+      const total = obtenerStockTotal(producto);
+      const disponibilidad = obtenerEstadoStock(total);
+      const marca = producto.marca || 'Marca no informada';
+      const tipo = producto.tipo || 'Tipo no informado';
 
       return `
         <article class="tarjeta">
-
           <div class="tarjeta-cuerpo">
-
             <span class="tarjeta-medida">
-              ${
-                escaparHTML(
-                  producto.medida ||
-                  'Sin medida'
-                )
-              }
+              ${escaparHTML(producto.medida || 'Sin medida')}
             </span>
-
             <h2 class="tarjeta-nombre">
-              ${
-                escaparHTML(
-                  producto.nombre
-                )
-              }
+              ${escaparHTML(producto.nombre)}
             </h2>
-
             <div class="tarjeta-meta">
-
-              <span class="etiqueta">
-                ${escaparHTML(marca)}
-              </span>
-
-              <span class="etiqueta">
-                ${escaparHTML(tipo)}
-              </span>
-
+              <span class="etiqueta">${escaparHTML(marca)}</span>
+              <span class="etiqueta">${escaparHTML(tipo)}</span>
             </div>
-
             <div class="tarjeta-precio">
-
-              <span class="precio-label">
-                Precio referencial
-              </span>
-
-              <span class="precio">
-                ${
-                  formatearPrecio(
-                    producto.precio
-                  )
-                }
-              </span>
-
+              <span class="precio-label">Precio referencial</span>
+              <span class="precio">${formatearPrecio(producto.precio)}</span>
             </div>
-
           </div>
-
           <div class="tarjeta-pie">
-
-            <span
-              class="estado-stock ${disponibilidad.clase}"
-            >
+            <span class="estado-stock ${disponibilidad.clase}">
               ${disponibilidad.texto}
             </span>
-
-            <button
-              class="btn-sucursales"
-              type="button"
-              data-indice="${indice}"
-            >
+            <button class="btn-sucursales" type="button" data-indice="${indice}">
               Ver sucursales
             </button>
-
           </div>
-
         </article>
       `;
-
     }
-
 
     /* MOSTRAR RESULTADOS */
-    function renderizarResultados(
-      lista,
-      termino
-    ) {
-
+    function renderizarResultados(lista, termino) {
       resultados.innerHTML = '';
 
-
       if (lista.length === 0) {
-
         mostrarSinResultados(termino);
         return;
-
       }
 
+      const visibles = lista.slice(0, MAX_RESULTADOS);
 
-      const visibles =
-        lista.slice(
-          0,
-          MAX_RESULTADOS
-        );
+      resultados.innerHTML = visibles
+        .map((producto, indice) => crearTarjeta(producto, indice))
+        .join('');
 
-
-      resultados.innerHTML =
-        visibles
-          .map(function(
-            producto,
-            indice
-          ) {
-
-            return crearTarjeta(
-              producto,
-              indice
-            );
-
-          })
-          .join('');
-
-
-      if (
-        lista.length >
-        MAX_RESULTADOS
-      ) {
-
-        resultados.insertAdjacentHTML(
-          'beforeend',
-          `
-            <p class="nota-resultados">
-
-              Se muestran los primeros
-              ${MAX_RESULTADOS}
-              resultados de
-
-              ${
-                lista.length
-                  .toLocaleString('es-CL')
-              }.
-
-              Escribe una medida más específica.
-
-            </p>
-          `
-        );
-
+      if (lista.length > MAX_RESULTADOS) {
+        resultados.insertAdjacentHTML('beforeend', `
+          <p class="nota-resultados">
+            Se muestran los primeros ${MAX_RESULTADOS} resultados de ${lista.length.toLocaleString('es-CL')}.
+            Escribe una medida más específica.
+          </p>
+        `);
       }
 
-
-      document
-        .querySelectorAll(
-          '.btn-sucursales'
-        )
-        .forEach(function(boton) {
-
-          boton.addEventListener(
-            'click',
-            function() {
-
-              verSucursales(
-                Number(
-                  boton.dataset.indice
-                )
-              );
-
-            }
-          );
-
+      document.querySelectorAll('.btn-sucursales').forEach(boton => {
+        boton.addEventListener('click', function() {
+          verSucursales(Number(boton.dataset.indice));
         });
-
+      });
     }
-
 
     /* EJECUTAR BÚSQUEDA */
     function ejecutarBusqueda() {
+      const terminoOriginal = buscador.value.trim();
+      const terminoNormalizado = normalizarTexto(terminoOriginal);
 
-      const terminoOriginal =
-        buscador.value.trim();
-
-      const terminoNormalizado =
-        normalizarTexto(
-          terminoOriginal
-        );
-
-
-      btnLimpiar.classList.toggle(
-        'visible',
-        terminoOriginal.length > 0
-      );
-
+      btnLimpiar.classList.toggle('visible', terminoOriginal.length > 0);
 
       if (!terminoNormalizado) {
-
         ultimoFiltrado = [];
-
-        estado.textContent =
-          'Escribe una medida para comenzar.';
-
+        estado.textContent = 'Escribe una medida para comenzar.';
         mostrarEstadoInicial();
-
         return;
-
       }
 
+      ultimoFiltrado = productos
+        .filter(producto => producto.busqueda.includes(terminoNormalizado))
+        .sort((productoA, productoB) => {
+          const medidaA = normalizarTexto(productoA.medida);
+          const medidaB = normalizarTexto(productoB.medida);
 
-      ultimoFiltrado =
-        productos
-          .filter(function(producto) {
+          const comienzaA = medidaA.startsWith(terminoNormalizado) ? 0 : 1;
+          const comienzaB = medidaB.startsWith(terminoNormalizado) ? 0 : 1;
 
-            return producto.busqueda.includes(
-              terminoNormalizado
-            );
+          if (comienzaA !== comienzaB) {
+            return comienzaA - comienzaB;
+          }
 
-          })
-          .sort(function(
-            productoA,
-            productoB
-          ) {
+          return obtenerStockTotal(productoB) - obtenerStockTotal(productoA);
+        });
 
-            const medidaA =
-              normalizarTexto(
-                productoA.medida
-              );
+      const cantidad = ultimoFiltrado.length;
+      estado.textContent = cantidad === 1
+        ? '1 producto encontrado.'
+        : cantidad.toLocaleString('es-CL') + ' productos encontrados.';
 
-            const medidaB =
-              normalizarTexto(
-                productoB.medida
-              );
-
-
-            const comienzaA =
-              medidaA.startsWith(
-                terminoNormalizado
-              )
-                ? 0
-                : 1;
-
-
-            const comienzaB =
-              medidaB.startsWith(
-                terminoNormalizado
-              )
-                ? 0
-                : 1;
-
-
-            if (
-              comienzaA !==
-              comienzaB
-            ) {
-
-              return comienzaA -
-                comienzaB;
-
-            }
-
-
-            return (
-              obtenerStockTotal(
-                productoB
-              ) -
-              obtenerStockTotal(
-                productoA
-              )
-            );
-
-          });
-
-
-      const cantidad =
-        ultimoFiltrado.length;
-
-
-      estado.textContent =
-        cantidad === 1
-          ? '1 producto encontrado.'
-          : cantidad.toLocaleString(
-              'es-CL'
-            ) +
-            ' productos encontrados.';
-
-
-      renderizarResultados(
-        ultimoFiltrado,
-        terminoOriginal
-      );
-
+      renderizarResultados(ultimoFiltrado, terminoOriginal);
     }
-
 
     /* ABRIR MODAL DE SUCURSALES */
     function verSucursales(indice) {
+      const producto = ultimoFiltrado[indice];
+      if (!producto) return;
 
-      const producto =
-        ultimoFiltrado[indice];
+      const sucursalesOrdenadas = SUCURSALES
+        .map(sucursal => ({
+          codigo: sucursal,
+          nombre: NOMBRES_SUCURSALES[sucursal] || sucursal,
+          stock: producto.sucursales[sucursal] || 0
+        }))
+        .sort((sucursalA, sucursalB) => sucursalB.stock - sucursalA.stock);
 
+      modalTitulo.textContent = producto.medida || 'Stock por sucursal';
+      modalSubtitulo.textContent = producto.nombre;
 
-      if (!producto) {
-        return;
-      }
+      listaSucursales.innerHTML = sucursalesOrdenadas
+        .map(sucursal => {
+          let textoStock = sucursal.stock > 25
+            ? 'DISPONIBLE'
+            : sucursal.stock + (sucursal.stock === 1 ? ' unidad' : ' unidades');
 
+          return `
+            <div class="fila-sucursal">
+              <span class="sucursal-nombre">${escaparHTML(sucursal.nombre)}</span>
+              <span class="sucursal-stock">${textoStock}</span>
+            </div>
+          `;
+        })
+        .join('');
 
-      const sucursalesOrdenadas =
-        SUCURSALES
-          .map(function(sucursal) {
-
-            return {
-
-              codigo: sucursal,
-
-              nombre:
-                NOMBRES_SUCURSALES[
-                  sucursal
-                ] ||
-                sucursal,
-
-              stock:
-                producto.sucursales[
-                  sucursal
-                ] ||
-                0
-
-            };
-
-          })
-          .sort(function(
-            sucursalA,
-            sucursalB
-          ) {
-
-            return (
-              sucursalB.stock -
-              sucursalA.stock
-            );
-
-          });
-
-
-      modalTitulo.textContent =
-        producto.medida ||
-        'Stock por sucursal';
-
-
-      modalSubtitulo.textContent =
-        producto.nombre;
-
-
-      listaSucursales.innerHTML =
-        sucursalesOrdenadas
-          .map(function(sucursal) {
-
-            let textoStock = '';
-            if (sucursal.stock > 25) {
-              textoStock = 'DISPONIBLE';
-            } else {
-              textoStock = sucursal.stock + (sucursal.stock === 1 ? ' unidad' : ' unidades');
-            }
-
-            return `
-              <div class="fila-sucursal">
-
-                <span class="sucursal-nombre">
-                  ${
-                    escaparHTML(
-                      sucursal.nombre
-                    )
-                  }
-                </span>
-
-                <span class="sucursal-stock">
-
-                  ${textoStock}
-
-                </span>
-
-              </div>
-            `;
-
-          })
-          .join('');
-
-
-      modalFondo.classList.add(
-        'abierto'
-      );
-
-
-      document.body.style.overflow =
-        'hidden';
-
-
+      modalFondo.classList.add('abierto');
+      document.body.style.overflow = 'hidden';
       modalCerrar.focus();
-
     }
-
 
     /* CERRAR MODAL */
     function cerrarModal() {
-
-      modalFondo.classList.remove(
-        'abierto'
-      );
-
-      document.body.style.overflow =
-        '';
-
+      modalFondo.classList.remove('abierto');
+      document.body.style.overflow = '';
     }
 
+    /* EVENTOS */
+    buscador.addEventListener('input', function() {
+      clearTimeout(temporizadorBusqueda);
+      temporizadorBusqueda = setTimeout(ejecutarBusqueda, 160);
+    });
 
-    /* BUSCAR AL ESCRIBIR */
-    buscador.addEventListener(
-      'input',
-      function() {
+    buscador.addEventListener('keydown', function(evento) {
+      if (evento.key === 'Enter') ejecutarBusqueda();
+    });
 
-        clearTimeout(
-          temporizadorBusqueda
-        );
+    btnBuscar.addEventListener('click', ejecutarBusqueda);
 
-        temporizadorBusqueda =
-          setTimeout(
-            function() {
+    btnLimpiar.addEventListener('click', function() {
+      buscador.value = '';
+      ejecutarBusqueda();
+      buscador.focus();
+    });
 
-              ejecutarBusqueda();
+    btnDescargarExcel.addEventListener('click', descargarExcel);
 
-            },
-            160
-          );
-
-      }
-    );
-
-
-    /* BUSCAR CON ENTER */
-    buscador.addEventListener(
-      'keydown',
-      function(evento) {
-
-        if (evento.key === 'Enter') {
-          ejecutarBusqueda();
-        }
-
-      }
-    );
-
-
-    /* BOTÓN BUSCAR */
-    btnBuscar.addEventListener(
-      'click',
-      ejecutarBusqueda
-    );
-
-
-    /* BOTÓN LIMPIAR */
-    btnLimpiar.addEventListener(
-      'click',
-      function() {
-
-        buscador.value = '';
-
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', function() {
+        buscador.value = chip.dataset.medida;
         ejecutarBusqueda();
-
         buscador.focus();
-
-      }
-    );
-
-
-    /* BOTÓN DESCARGAR EXCEL */
-    btnDescargarExcel.addEventListener(
-      'click',
-      descargarExcel
-    );
-
-
-    /* BÚSQUEDAS RÁPIDAS */
-    document
-      .querySelectorAll('.chip')
-      .forEach(function(chip) {
-
-        chip.addEventListener(
-          'click',
-          function() {
-
-            buscador.value =
-              chip.dataset.medida;
-
-            ejecutarBusqueda();
-
-            buscador.focus();
-
-          }
-        );
-
       });
+    });
 
+    modalCerrar.addEventListener('click', cerrarModal);
 
-    /* CERRAR MODAL */
-    modalCerrar.addEventListener(
-      'click',
-      cerrarModal
-    );
+    modalFondo.addEventListener('click', function(evento) {
+      if (evento.target === modalFondo) cerrarModal();
+    });
 
-
-    /* CERRAR AL HACER CLIC FUERA */
-    modalFondo.addEventListener(
-      'click',
-      function(evento) {
-
-        if (
-          evento.target ===
-          modalFondo
-        ) {
-
-          cerrarModal();
-
-        }
-
+    document.addEventListener('keydown', function(evento) {
+      if (evento.key === 'Escape' && modalFondo.classList.contains('abierto')) {
+        cerrarModal();
       }
-    );
-
-
-    /* CERRAR CON ESCAPE */
-    document.addEventListener(
-      'keydown',
-      function(evento) {
-
-        if (
-          evento.key === 'Escape' &&
-          modalFondo.classList.contains(
-            'abierto'
-          )
-        ) {
-
-          cerrarModal();
-
-        }
-
-      }
-    );
-
+    });
 
     /* INICIAR CATÁLOGO */
     cargarProductos();
-
   </script>
-
 </body>
 </html>
