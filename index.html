@@ -306,14 +306,12 @@
       `;
     }
 
-    /* CARGAR PRODUCTOS DESDE EL WORKER CONSOLIDADO */
+    /* CARGAR PRODUCTOS DESDE EL WORKER CON DETECCIÓN FLEXIBLE DE COLUMNAS */
     async function cargarProductos() {
       try {
         const respuesta = await fetch(URL_DATOS, { cache: 'no-store' });
 
-        if (!respuesta.ok) {
-          throw new Error('No se pudo leer la información del Worker');
-        }
+        if (!respuesta.ok) throw new Error('No se pudo leer la información');
 
         const fechaHeader = respuesta.headers.get('last-modified');
         const fechaObj = fechaHeader ? new Date(fechaHeader) : new Date();
@@ -331,30 +329,41 @@
           .split(/\r?\n/)
           .filter(linea => linea.trim() !== '');
 
-        if (lineas.length < 2) {
-          throw new Error('El catálogo está vacío');
-        }
+        if (lineas.length < 2) throw new Error('El catálogo está vacío');
 
         const encabezados = parsearLineaCSV(lineas[0]).map(h => h.trim().toLowerCase());
 
-        const idxSku = encabezados.indexOf('sku');
-        const idxNombre = encabezados.indexOf('nombre');
-        const idxMarca = encabezados.indexOf('marca');
-        const idxTipo = encabezados.indexOf('tipo');
-        const idxMedida = encabezados.indexOf('pp');
+        // Búsqueda ultra flexible de columnas principales
+        let idxSku = encabezados.indexOf('sku');
 
-        // Búsqueda de columna de precio en el CSV que entrega el Worker
+        let idxNombre = encabezados.indexOf('nombre');
+        if (idxNombre === -1) {
+          idxNombre = encabezados.findIndex(h => h.includes('nombre') || h.includes('descrip') || h.includes('articulo') || h.includes('producto'));
+        }
+
+        let idxMedida = encabezados.indexOf('pp');
+        if (idxMedida === -1) {
+          idxMedida = encabezados.findIndex(h => h.includes('medida') || h.includes('pp') || h.includes('dimension'));
+        }
+
+        let idxMarca = encabezados.indexOf('marca');
+        let idxTipo = encabezados.indexOf('tipo');
+
         let idxPrecio = encabezados.indexOf('precio');
         if (idxPrecio === -1) {
           idxPrecio = encabezados.findIndex(h => h.includes('precio') || h.includes('p.venta') || h.includes('val'));
         }
 
+        // Mapeo de sucursales
         const idxSucursales = {};
         SUCURSALES.forEach(sucursal => {
           idxSucursales[sucursal] = encabezados.indexOf(sucursal.toLowerCase());
         });
 
         productos = [];
+
+        // Si no encontró columna 'nombre', usa la primera columna válida (índice 0)
+        if (idxNombre === -1) idxNombre = 0;
 
         for (let i = 1; i < lineas.length; i++) {
           const columnas = parsearLineaCSV(lineas[i]);
@@ -363,6 +372,9 @@
           if (!nombre) continue;
 
           const sku = idxSku !== -1 && columnas[idxSku] ? columnas[idxSku].trim() : '';
+          const medida = idxMedida !== -1 && columnas[idxMedida] ? columnas[idxMedida].trim() : '';
+          const marca = idxMarca !== -1 && columnas[idxMarca] ? columnas[idxMarca].trim() : '';
+          const tipo = idxTipo !== -1 && columnas[idxTipo] ? columnas[idxTipo].trim() : '';
 
           const sucursales = {};
           SUCURSALES.forEach(sucursal => {
@@ -371,22 +383,13 @@
             sucursales[sucursal] = Number.isNaN(numero) ? 0 : numero;
           });
 
-          const medida = columnas[idxMedida] ? columnas[idxMedida].trim() : '';
-          const marca = columnas[idxMarca] ? columnas[idxMarca].trim() : '';
-          const tipo = columnas[idxTipo] ? columnas[idxTipo].trim() : '';
-
-          // Parseo de precio
+          // Parseo del precio
           let precio = Number.NaN;
           if (idxPrecio !== -1 && columnas[idxPrecio]) {
-            let valorRaw = columnas[idxPrecio].trim();
-            valorRaw = valorRaw.replace(/\$/g, '').trim();
-            if (valorRaw.includes('.')) {
-              valorRaw = valorRaw.split('.')[0];
-            }
+            let valorRaw = columnas[idxPrecio].trim().replace(/\$/g, '');
+            if (valorRaw.includes('.')) valorRaw = valorRaw.split('.')[0];
             valorRaw = valorRaw.replace(/,/g, '');
-            if (valorRaw !== '') {
-              precio = Number.parseInt(valorRaw, 10);
-            }
+            if (valorRaw !== '') precio = Number.parseInt(valorRaw, 10);
           }
 
           productos.push({
