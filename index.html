@@ -225,13 +225,14 @@
       return resultado;
     }
 
-    /* NORMALIZAR TEXTO PARA BUSCAR */
+    /* NORMALIZAR TEXTO PARA BÚSQUEDA FLEXIBLE */
     function normalizarTexto(valor) {
       return String(valor || '')
         .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[\u0300-\u036f]/g, '') // Quitar acentos
         .toLowerCase()
-        .replace(/[^a-z0-9]/g, '');
+        .replace(/r/g, '')               // Quitar la 'R' de las medidas (ej: R15 -> 15)
+        .replace(/[^a-z0-9]/g, '');      // Quitar espacios, barras y guiones
     }
 
     /* PROTEGER TEXTO DEL CSV */
